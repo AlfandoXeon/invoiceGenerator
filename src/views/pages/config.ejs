@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Navigasi -->
+  <%- include('../partials/navigation') %>
+
+  <!-- Konten Utama -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
+
+    <!-- Judul Halaman -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" data-aos="fade-down">
+      <div>
+        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined text-slate-500">storefront</span>
+          <span>Profil & Pengaturan Toko</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Atur identitas toko dan tampilan struk belanja Anda.
+        </p>
+      </div>
+
+      <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+        <div class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">check_circle</span>
+          <span><%= successMessage %></span>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- FORM PENGATURAN -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- KOLOM 1: LOGO TOKO -->
+      <div class="clean-card p-5 flex flex-col items-center gap-3 text-center h-fit" data-aos="fade-right">
+        <h3 class="font-bold text-xs sm:text-sm">
+          Logo Toko
+        </h3>
+
+        <!-- Kotak Pratinjau Logo -->
+        <div class="w-32 h-32 rounded-xl bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center p-2 relative overflow-hidden">
+          <% if (config.store.logoUrl) { %>
+            <img src="<%= config.store.logoUrl %>" alt="Logo Toko" class="max-w-full max-h-full object-contain">
+          <% } else { %>
+            <div class="flex flex-col items-center text-slate-400 gap-1">
+              <span class="material-symbols-outlined text-3xl">image</span>
+              <span class="text-[10px]">Belum ada logo</span>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Form Upload Logo -->
+        <form action="/config/logo" method="POST" enctype="multipart/form-data" class="w-full flex flex-col gap-2">
+          <label class="clean-btn-secondary text-xs py-2 w-full cursor-pointer">
+            <span class="material-symbols-outlined text-base text-slate-500">upload</span>
+            <span>Ganti Logo</span>
+            <input type="file" name="logo" accept="image/*" class="hidden" onchange="this.form.submit()">
+          </label>
+          <span class="text-[10px] text-slate-400">Format: PNG atau JPG</span>
+        </form>
+      </div>
+
+      <!-- KOLOM 2 & 3: FORM ISIAN -->
+      <div class="md:col-span-2 clean-card p-6" data-aos="fade-left">
+        <form action="/config" method="POST" class="flex flex-col gap-5">
+
+          <!-- Bagian 1: Data Toko -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider mb-3 text-slate-600">
+              Informasi Toko
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="sm:col-span-2">
+                <label class="clean-label">Nama Toko</label>
+                <input type="text" name="storeName" value="<%= config.store.name %>" required class="clean-input font-bold">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="clean-label">Slogan Toko</label>
+                <input type="text" name="tagline" value="<%= config.store.tagline %>" class="clean-input">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="clean-label">Alamat Toko</label>
+                <input type="text" name="address" value="<%= config.store.address %>" class="clean-input">
+              </div>
+              <div>
+                <label class="clean-label">Nomor Telepon / WhatsApp</label>
+                <input type="text" name="phone" value="<%= config.store.phone %>" class="clean-input">
+              </div>
+              <div>
+                <label class="clean-label">Email (Opsional)</label>
+                <input type="email" name="email" value="<%= config.store.email %>" class="clean-input">
+              </div>
+              <div class="sm:col-span-2 flex items-center gap-2 pt-1">
+                <input type="checkbox" id="useLogoOnReceipt" name="useLogoOnReceipt" <%= config.store.useLogoOnReceipt ? 'checked' : '' %> class="w-4 h-4 rounded text-red-600 border-slate-300">
+                <label for="useLogoOnReceipt" class="text-xs font-medium cursor-pointer">
+                  Cetak logo toko di bagian atas struk
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-100"></div>
+
+          <!-- Bagian 2: Pengaturan Struk -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider mb-3 text-slate-600">
+              Pengaturan Struk & Nota
+            </h4>
+            
+            <!-- Ukuran Kertas -->
+            <div class="mb-4">
+              <label class="clean-label">Ukuran Kertas Printer</label>
+              <div class="grid grid-cols-2 gap-3 mt-1">
+                <label class="flex items-center gap-2.5 p-3 rounded-lg border border-slate-200 bg-slate-50/50 cursor-pointer hover:bg-slate-100 transition">
+                  <input type="radio" name="paperSize" value="58mm" <%= config.pos.paperSize === '58mm' ? 'checked' : '' %> class="text-red-600">
+                  <div>
+                    <div class="text-xs font-bold">58mm (Kertas Kecil)</div>
+                    <div class="text-[10px] text-slate-500">Printer mini Bluetooth / USB</div>
+                  </div>
+                </label>
+                <label class="flex items-center gap-2.5 p-3 rounded-lg border border-slate-200 bg-slate-50/50 cursor-pointer hover:bg-slate-100 transition">
+                  <input type="radio" name="paperSize" value="80mm" <%= config.pos.paperSize === '80mm' ? 'checked' : '' %> class="text-red-600">
+                  <div>
+                    <div class="text-xs font-bold">80mm (Kertas Standar)</div>
+                    <div class="text-[10px] text-slate-500">Printer kasir lebar</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div>
+                <label class="clean-label">Nama Kasir Utama</label>
+                <input type="text" name="defaultCashier" value="<%= config.pos.defaultCashier %>" class="clean-input">
+              </div>
+              <div>
+                <label class="clean-label">Awalan Nomor Nota</label>
+                <input type="text" name="invoicePrefix" value="<%= config.pos.invoicePrefix %>" class="clean-input font-mono font-medium">
+              </div>
+              <div>
+                <label class="clean-label">Tarif Pajak PPN (%)</label>
+                <input type="number" name="defaultTaxPercent" value="<%= config.pos.defaultTaxPercent %>" min="0" class="clean-input">
+              </div>
+            </div>
+
+            <div class="mt-3.5">
+              <label class="clean-label">Pesan di Bawah Struk (Ucapan Terima Kasih)</label>
+              <textarea name="footerNote" rows="3" class="clean-input text-xs resize-none"><%= config.pos.footerNote %></textarea>
+            </div>
+          </div>
+
+          <!-- Tombol Simpan -->
+          <div class="pt-2 flex justify-end">
+            <button type="submit" class="clean-btn-primary px-6 py-2.5 text-xs sm:text-sm">
+              <span class="material-symbols-outlined text-base">save</span>
+              <span>Simpan Profil Toko</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <%- include('../partials/footer') %>
+
+  <!-- Toast -->
+  <%- include('../partials/toast') %>
+
+</body>
+</html>

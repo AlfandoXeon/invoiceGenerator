@@ -1,0 +1,13 @@
+<footer class="bg-white border-t border-slate-200 py-4 text-xs text-slate-500 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
+    <div>
+      <span class="font-medium text-slate-700">
+        <%= (typeof config !== 'undefined' && config.store && config.store.name) ? config.store.name : 'Toko' %>
+      </span>
+      <span>&copy; 2026. Aplikasi Kasir & Struk Toko.</span>
+    </div>
+    <div class="text-slate-400 text-[11px]">
+      Format Kertas: <%= (typeof config !== 'undefined' && config.pos && config.pos.paperSize) ? config.pos.paperSize : '58mm' %>
+    </div>
+  </div>
+</footer>

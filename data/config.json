@@ -1,0 +1,27 @@
+{
+  "store": {
+    "name": "asd",
+    "tagline": "Belanja Puas, Harga Pas!",
+    "address": "Jl. Raya Informatika No. 101, Salatiga",
+    "phone": "085764175824",
+    "email": "kontak@xeonstore.local",
+    "logoUrl": "",
+    "useLogoOnReceipt": true
+  },
+  "pos": {
+    "defaultCashier": "HOKI",
+    "cashiers": [
+      "HOKI",
+      "Kasir 1",
+      "Owner"
+    ],
+    "theme": "light",
+    "invoicePrefix": "AX-",
+    "defaultTaxPercent": 10,
+    "paperSize": "58mm",
+    "defaultPaymentMethod": "TUNAI",
+    "requireConfirmation": true,
+    "showBarcodeOnReceipt": true,
+    "footerNote": "TERIMA KASIH ATAS KUNJUNGAN ANDA\r\nLAYANAN KONSUMEN SMS/WA: 0811-1500-959\r\nBARANG YANG SUDAH DIBELI TIDAK DAPAT DITUKAR\r\nSIMPAN STRUK INI SEBAGAI BUKTI PEMBAYARAN"
+  }
+}

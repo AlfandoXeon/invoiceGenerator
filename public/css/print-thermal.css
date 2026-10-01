@@ -1,0 +1,99 @@
+/* ==========================================================================
+   PRINT-THERMAL.CSS - Engine Cetak Thermal Presisi 58mm & 80mm
+   Dibuat khusus untuk printer thermal Bluetooth / USB tanpa margin browser
+   ========================================================================== */
+
+@media print {
+  /* Hilangkan header, footer tanggal/URL browser & margin halaman */
+  @page {
+    margin: 0mm;
+    size: auto;
+  }
+
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Sembunyikan semua elemen UI dashboard saat mode print aktif */
+  #app-sidebar,
+  #app-navbar,
+  .no-print,
+  button,
+  .btn,
+  .tab-header,
+  header,
+  footer,
+  aside,
+  nav,
+  .toast-container {
+    display: none !important;
+  }
+
+  /* Format pembungkus struk */
+  .receipt-print-wrapper {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 2mm 3mm !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+  }
+
+  /* Lebar Kertas 58mm Standar POS Mini */
+  .paper-58mm {
+    width: 48mm !important; /* Printable area untuk roll 58mm */
+    max-width: 48mm !important;
+    font-size: 8.5pt !important;
+    line-height: 1.25 !important;
+    margin: 0 auto !important;
+  }
+
+  /* Lebar Kertas 80mm Standar Supermarket */
+  .paper-80mm {
+    width: 72mm !important; /* Printable area untuk roll 80mm */
+    max-width: 72mm !important;
+    font-size: 9.5pt !important;
+    line-height: 1.3 !important;
+    margin: 0 auto !important;
+  }
+
+  /* Tipografi thermal murni monokrom */
+  .thermal-receipt {
+    font-family: 'Courier Prime', 'Courier New', monospace !important;
+    color: #000000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Garis putus-putus pencetak thermal */
+  .thermal-dashed-line {
+    border-top: 1px dashed #000000 !important;
+    margin: 4px 0 !important;
+    height: 0 !important;
+    width: 100% !important;
+  }
+
+  .thermal-double-line {
+    border-top: 1px double #000000 !important;
+    margin: 4px 0 !important;
+  }
+
+  /* Hindari pemotongan halaman tidak sengaja di tengah baris item */
+  .thermal-row {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

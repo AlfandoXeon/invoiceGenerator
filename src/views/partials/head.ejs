@@ -1,0 +1,52 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= typeof title !== 'undefined' ? title : 'Xeon Invoice Generator' %></title>
+
+<!-- Google Fonts: Plus Jakarta Sans & Courier Prime -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Google Material Symbols -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- AOS.js (Animate On Scroll) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+<!-- html2canvas untuk Simpan Gambar Struk -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/print-thermal.css">
+
+<!-- Inisialisasi Tema Instan & AOS -->
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('xeon_theme') || '<%= (typeof config !== "undefined" && config.pos && config.pos.theme) ? config.pos.theme : "light" %>';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    window.applyAppTheme = function(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      if (document.body) {
+        document.body.setAttribute('data-theme', themeName);
+      }
+      localStorage.setItem('xeon_theme', themeName);
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.setAttribute('data-theme', savedTheme);
+      if (typeof AOS !== 'undefined') {
+        AOS.init({
+          duration: 400,
+          once: true,
+          easing: 'ease-out-cubic'
+        });
+      }
+    });
+  })();
+</script>

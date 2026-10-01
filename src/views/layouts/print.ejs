@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Cetak Struk <%= transaction.invoiceNumber %></title>
+  <link rel="stylesheet" href="/css/print-thermal.css">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 10px;
+      background: #f8fafc;
+      font-family: 'Courier Prime', monospace;
+    }
+    .print-container {
+      background: white;
+      margin: 0 auto;
+      padding: 15px;
+      width: <%= config.pos.paperSize === '80mm' ? '72mm' : '48mm' %>;
+      color: black;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body onload="window.print()">
+  <div class="print-container thermal-receipt">
+    <div style="text-align: center; margin-bottom: 8px;">
+      <h2 style="margin: 0; font-size: 14px; font-weight: bold; text-transform: uppercase;"><%= config.store.name %></h2>
+      <% if (config.store.tagline) { %>
+        <div style="font-size: 10px;"><%= config.store.tagline %></div>
+      <% } %>
+      <% if (config.store.address) { %>
+        <div style="font-size: 9px; margin-top: 2px;"><%= config.store.address %></div>
+      <% } %>
+      <% if (config.store.phone) { %>
+        <div style="font-size: 9px;">Telp: <%= config.store.phone %></div>
+      <% } %>
+    </div>
+
+    <div class="thermal-dashed-line"></div>
+
+    <div style="font-size: 10px; margin-bottom: 6px;">
+      <div>No: <%= transaction.invoiceNumber %></div>
+      <div>Tgl: <%= transaction.formattedDate %></div>
+      <div>Kasir: <%= transaction.cashier %></div>
+      <div>Bayar: <%= transaction.paymentMethod %></div>
+    </div>
+
+    <div class="thermal-dashed-line"></div>
+
+    <div>
+      <% transaction.items.forEach(function(item) { %>
+        <div class="thermal-row" style="margin-bottom: 4px;">
+          <div style="font-weight: bold;"><%= item.name.toUpperCase() %></div>
+          <div style="display: flex; justify-content: space-between;">
+            <span><%= item.qty %> x <%= formatRupiah(item.price).replace('Rp', '') %></span>
+            <span style="font-weight: bold;"><%= formatRupiah(item.price * item.qty).replace('Rp', '') %></span>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <div class="thermal-dashed-line"></div>
+
+    <div style="font-size: 10px;">
+      <div style="display: flex; justify-content: space-between;">
+        <span>SUBTOTAL</span>
+        <span><%= formatRupiah(transaction.subtotal) %></span>
+      </div>
+      <% if (transaction.discount > 0) { %>
+        <div style="display: flex; justify-content: space-between;">
+          <span>DISKON</span>
+          <span><%= formatRupiah(transaction.discount) %></span>
+        </div>
+      <% } %>
+      <% if (transaction.taxAmount > 0) { %>
+        <div style="display: flex; justify-content: space-between;">
+          <span>PPN (<%= transaction.taxPercent %>%)</span>
+          <span><%= formatRupiah(transaction.taxAmount) %></span>
+        </div>
+      <% } %>
+      <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 11px; margin-top: 4px;">
+        <span>TOTAL AKHIR</span>
+        <span><%= formatRupiah(transaction.grandTotal) %></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+        <span>BAYAR</span>
+        <span><%= formatRupiah(transaction.cashReceived) %></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: bold;">
+        <span>KEMBALIAN</span>
+        <span><%= formatRupiah(transaction.change) %></span>
+      </div>
+    </div>
+
+    <div class="thermal-dashed-line"></div>
+
+    <div style="text-align: center; font-size: 9px; margin-top: 8px; white-space: pre-line;">
+      <%= config.pos.footerNote %>
+    </div>
+  </div>
+</body>
+</html>
