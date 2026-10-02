@@ -1,22 +1,22 @@
 {
   "store": {
-    "name": "asd",
-    "tagline": "Belanja Puas, Harga Pas!",
-    "address": "Jl. Raya Informatika No. 101, Salatiga",
+    "name": "SRC - Vies Store",
+    "tagline": "Belanja Puas Harga Pas",
+    "address": "JL Raya Salatiga, Sidorejo, Salatiga, Jawa Tengah",
     "phone": "085764175824",
-    "email": "kontak@xeonstore.local",
-    "logoUrl": "",
+    "email": "viesstore@gmail.com",
+    "logoUrl": "/uploads/store-logo-1790915460827.png",
     "useLogoOnReceipt": true
   },
   "pos": {
-    "defaultCashier": "HOKI",
+    "defaultCashier": "Chintia",
     "cashiers": [
-      "HOKI",
-      "Kasir 1",
-      "Owner"
+      "Rizky",
+      "Mulyadi",
+      "Chintia"
     ],
     "theme": "light",
-    "invoicePrefix": "AX-",
+    "invoicePrefix": "VSC-",
     "defaultTaxPercent": 10,
     "paperSize": "58mm",
     "defaultPaymentMethod": "TUNAI",

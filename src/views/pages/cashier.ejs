@@ -28,7 +28,7 @@
 
       <div class="clean-card p-4 col-span-2 sm:col-span-1">
         <span class="text-xs font-semibold text-slate-500">Jumlah Barang Terdaftar</span>
-        <p class="text-lg sm:text-xl font-bold text-slate-900 mt-1"><%= products.length %> Produk</p>
+        <p id="stat-products-count" class="text-lg sm:text-xl font-bold text-slate-900 mt-1"><%= products.length %> Produk</p>
       </div>
     </div>
 
@@ -52,9 +52,10 @@
             <div class="col-span-12 sm:col-span-6">
               <label class="clean-label">Nama Barang</label>
               <input type="text" id="quick-item-name" placeholder="Pilih atau ketik barang..." list="products-datalist" autocomplete="off" required class="clean-input">
+              <div id="quick-stock-info" class="hidden text-[11px] font-medium mt-1"></div>
               <datalist id="products-datalist">
                 <% products.forEach(function(p) { %>
-                  <option value="<%= p.name %>" data-price="<%= p.sellingPrice %>">
+                  <option value="<%= p.name %>" data-price="<%= p.sellingPrice %>" data-stock="<%= p.stock %>">
                     <%= formatRupiah(p.sellingPrice) %> - Stok: <%= p.stock %>
                   </option>
                 <% }); %>
@@ -81,11 +82,12 @@
           <% if (products.length > 0) { %>
             <div class="mt-3 pt-3 border-t border-slate-100">
               <span class="text-[11px] font-semibold text-slate-500 block mb-1.5">Pilihan Cepat:</span>
-              <div class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto">
+              <div id="quick-presets-container" class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto">
                 <% products.slice(0, 8).forEach(function(prod) { %>
-                  <button type="button" onclick="CashierApp.addFromPreset('<%= prod.id %>')" class="px-2.5 py-1 rounded-md text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1 active:scale-95">
+                  <% const isOut = prod.stock <= 0; %>
+                  <button type="button" onclick="CashierApp.addFromPreset('<%= prod.id %>')" class="px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1 active:scale-95 <%= isOut ? 'bg-slate-100 text-slate-400 opacity-60 cursor-not-allowed' : 'bg-slate-100 hover:bg-slate-200 text-slate-700' %>" <%= isOut ? 'title="Stok Habis"' : '' %>>
                     <span><%= prod.name %></span>
-                    <span class="text-slate-400 text-[11px]">(<%= formatRupiah(prod.sellingPrice).replace('Rp', '') %>)</span>
+                    <span class="text-slate-400 text-[11px]">(<%= formatRupiah(prod.sellingPrice).replace('Rp', '') %> | Stok: <%= prod.stock %>)</span>
                   </button>
                 <% }); %>
               </div>
@@ -178,25 +180,36 @@
             <div class="space-y-3 bg-slate-50 p-3.5 rounded-lg border border-slate-200 flex flex-col justify-between">
               <div>
                 <label class="clean-label text-slate-700">Uang Diterima (Rp)</label>
-                <input type="number" id="input-cash" min="0" value="0" oninput="CashierApp.updateStateFromInputs()" class="clean-input font-bold text-base text-slate-900">
+                <input type="number" id="input-cash" min="0" value="0" oninput="CashierApp.updateStateFromInputs()" onkeydown="if(event.key === '-' || event.key === 'e' || event.key === '+') event.preventDefault();" class="clean-input font-bold text-base text-slate-900" placeholder="0">
+                <div id="cash-status-note" class="hidden"></div>
               </div>
 
-              <!-- Tombol Cepat Nominal -->
+              <!-- Tombol Cepat Nominal Pecahan Rupiah -->
               <div>
-                <span class="text-[10px] font-semibold text-slate-500 block mb-1">Pilihan Cepat:</span>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Pilihan Cepat:</span>
+                  <button type="button" onclick="CashierApp.setFastCash('reset')" class="text-[10px] text-slate-400 hover:text-red-600 transition flex items-center gap-0.5" title="Reset Uang Diterima ke 0">
+                    <span class="material-symbols-outlined text-xs">restart_alt</span>
+                    <span>Reset (0)</span>
+                  </button>
+                </div>
                 <div class="flex flex-wrap gap-1.5">
-                  <button type="button" onclick="CashierApp.setFastCash('exact')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs">Uang Pas</button>
-                  <button type="button" onclick="CashierApp.setFastCash(10000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300">10k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(20000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300">20k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(50000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300">50k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(100000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300">100k</button>
+                  <button type="button" onclick="CashierApp.setFastCash('exact')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs active:scale-95 transition" title="Bayar Pas Sesuai Total Belanja">Uang Pas</button>
+                  <button type="button" onclick="CashierApp.setFastCash(500)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 500">+500</button>
+                  <button type="button" onclick="CashierApp.setFastCash(1000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 1.000">+1k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(2000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 2.000">+2k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(5000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 5.000">+5k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(10000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 10.000">+10k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(20000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 20.000">+20k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(50000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 50.000">+50k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(100000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 100.000">+100k</button>
                 </div>
               </div>
 
               <!-- Tampilan Total & Kembalian -->
               <div class="pt-2 border-t border-slate-200 flex justify-between items-end">
                 <div>
-                  <span class="text-xs text-slate-500">Kembalian:</span>
+                  <span class="text-xs text-slate-500" id="label-change">Kembalian:</span>
                   <div id="val-change" class="text-lg font-bold text-emerald-600">Rp0</div>
                 </div>
                 <div class="text-right">
@@ -446,27 +459,64 @@
 
       const nameInput = document.getElementById('quick-item-name');
       const priceInput = document.getElementById('quick-item-price');
-      nameInput.addEventListener('input', (e) => {
-        const val = e.target.value.toLowerCase().trim();
-        const matched = window.STORE_PRODUCTS.find(p => p.name.toLowerCase() === val || (p.barcode && p.barcode.toLowerCase() === val));
-        if (matched) {
-          priceInput.value = matched.sellingPrice;
+      const qtyInput = document.getElementById('quick-item-qty');
+      const stockBadge = document.getElementById('quick-stock-info');
+
+      function updateStockHint() {
+        const val = nameInput.value.toLowerCase().trim();
+        if (!val) {
+          if (stockBadge) stockBadge.classList.add('hidden');
+          return;
         }
-      });
+
+        const matched = (window.STORE_PRODUCTS || []).find(p => 
+          p.name.toLowerCase() === val || 
+          (p.barcode && p.barcode.toLowerCase() === val)
+        );
+
+        if (matched) {
+          if (!priceInput.value || priceInput.value === '0') {
+            priceInput.value = matched.sellingPrice;
+          }
+          if (stockBadge) {
+            stockBadge.classList.remove('hidden');
+            const qty = parseInt(qtyInput.value, 10) || 1;
+            if (matched.stock <= 0) {
+              stockBadge.className = 'text-[11px] font-medium mt-1 text-red-600';
+              stockBadge.innerText = 'Stok produk ini telah habis (0 ' + (matched.unit || 'Pcs') + ')';
+            } else if (qty > matched.stock) {
+              stockBadge.className = 'text-[11px] font-medium mt-1 text-amber-600';
+              stockBadge.innerText = 'Peringatan: Jumlah (' + qty + ') melebihi stok yang ada (' + matched.stock + ' ' + (matched.unit || 'Pcs') + ')';
+            } else {
+              stockBadge.className = 'text-[11px] font-medium mt-1 text-emerald-600';
+              stockBadge.innerText = 'Stok tersedia: ' + matched.stock + ' ' + (matched.unit || 'Pcs');
+            }
+          }
+        } else {
+          if (stockBadge) stockBadge.classList.add('hidden');
+        }
+      }
+
+      nameInput.addEventListener('input', updateStockHint);
+      qtyInput.addEventListener('input', updateStockHint);
     });
 
     function handleFormAddItem(e) {
       e.preventDefault();
-      const name = document.getElementById('quick-item-name').value;
-      const price = document.getElementById('quick-item-price').value;
-      const qty = document.getElementById('quick-item-qty').value;
+      const nameEl = document.getElementById('quick-item-name');
+      const priceEl = document.getElementById('quick-item-price');
+      const qtyEl = document.getElementById('quick-item-qty');
       
-      CashierApp.addItem(name, price, qty);
+      const success = CashierApp.addItem(nameEl.value, priceEl.value, qtyEl.value);
 
-      document.getElementById('quick-item-name').value = '';
-      document.getElementById('quick-item-price').value = '';
-      document.getElementById('quick-item-qty').value = '1';
-      document.getElementById('quick-item-name').focus();
+      if (success) {
+        nameEl.value = '';
+        priceEl.value = '';
+        qtyEl.value = '1';
+        const stockBadge = document.getElementById('quick-stock-info');
+        if (stockBadge) stockBadge.classList.add('hidden');
+        nameEl.focus();
+      }
     }
   </script>
 </body>

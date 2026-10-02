@@ -18,8 +18,8 @@ Aplikasi ini dirancang khusus untuk toko kelontong, warung, minimarket mandiri, 
 3. Validasi dan Konfirmasi Transaksi Sebelum Cetak:
    Sistem menampilkan jendela peninjauan ulang pesanan sebelum disimpan ke riwayat dan dicetak, sehingga kasir dapat memastikan kesesuaian barang dan nominal uang belanja.
 
-4. Penyimpanan Berkas JSON Independen:
-   Seluruh data disimpan dalam berkas JSON lokal di dalam folder data (config.json, products.json, transactions.json) dengan mekanisme penulisan aman untuk mencegah kerusakan data saat listrik padam tiba-tiba.
+4. Basis Data SQLite 3 Cepat dan Mandiri:
+   Data produk dan transaksi penjualan dikelola langsung menggunakan SQLite 3 (database.sqlite) berkecepatan tinggi dengan mode Write-Ahead Logging (WAL), sementara profil dan pengaturan toko disimpan secara aman pada config.json.
 
 5. Pengaturan Petugas Kasir dan Dukungan Multi-Tema:
    - Daftar petugas kasir dapat dikelola dan dipilih langsung saat transaksi.
@@ -31,8 +31,8 @@ Aplikasi ini dirancang khusus untuk toko kelontong, warung, minimarket mandiri, 
 7. Riwayat Penjualan Lengkap dan Cetak Ulang:
    Setiap transaksi tersimpan rapi dan dapat ditinjau ulang maupun dicetak ulang kapan saja.
 
-8. Pencadangan Data:
-   Fitur ekspor cadangan data lengkap dalam satu berkas untuk memudahkan pemindahan data ke komputer lain.
+8. Pencadangan Data (Backup ZIP):
+   Fitur ekspor cadangan data lengkap dalam satu berkas arsip ZIP (berisi database.sqlite dan config.json) untuk memudahkan pemindahan data ke flashdisk atau komputer lain.
 
 ---
 
@@ -62,10 +62,9 @@ Aplikasi dibangun menggunakan pola arsitektur Model-View-Controller (MVC) dan Ob
 
 ```text
 Invoice Image Generator/
-|-- data/                         Penyimpanan database JSON lokal
+|-- data/                         Penyimpanan basis data lokal
 |   |-- config.json               Konfigurasi profil toko dan preferensi nota
-|   |-- products.json             Daftar barang dan harga jual
-|   `-- transactions.json         Riwayat seluruh transaksi nota belanja
+|   `-- database.sqlite           Basis data SQLite 3 untuk produk dan transaksi
 |
 |-- public/                       Aset statis antarmuka
 |   |-- css/
@@ -85,11 +84,12 @@ Invoice Image Generator/
 |   |   |-- ProductController.js
 |   |   |-- HistoryController.js
 |   |   `-- SettingsController.js
-|   |-- models/                   Model data dan akses berkas (Model OOP)
-|   |   |-- JsonStorage.js        Utilitas penyimpanan aman atomic write
+|   |-- models/                   Model data dan akses basis data (Model OOP)
+|   |   |-- Database.js           Pengelola koneksi dan skema SQLite 3
+|   |   |-- JsonStorage.js        Utilitas penyimpanan aman berkas konfigurasi
 |   |   |-- StoreConfig.js        Model konfigurasi toko
-|   |   |-- Product.js            Model data produk
-|   |   `-- Transaction.js        Model transaksi nota
+|   |   |-- Product.js            Model data produk (SQLite 3)
+|   |   `-- Transaction.js        Model transaksi nota (SQLite 3)
 |   |-- routes/                   Rute endpoint aplikasi
 |   `-- views/                    Tampilan antarmuka berbasis EJS
 |       |-- pages/                Halaman utama (kasir, produk, riwayat, profil, pengaturan)

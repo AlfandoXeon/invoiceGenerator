@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const Database = require('./src/models/Database');
 
 // Inisialisasi Express
 const app = express();
@@ -42,13 +43,20 @@ app.use((req, res) => {
 });
 
 // Jalankan Server Lokal
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  try {
+    await Database.init();
+  } catch (err) {
+    console.error('[Server] Gagal inisialisasi database:', err.message);
+  }
+
   console.log('====================================================');
-  console.log('  ⚡ XEON INVOICE GENERATOR - SERVER LOKAL SIAP ⚡');
+  console.log('  XEON INVOICE GENERATOR - SERVER LOKAL SIAP');
   console.log('====================================================');
-  console.log(`  🌐 Buka di browser: http://localhost:${PORT}`);
-  console.log(`  📂 Database JSON lokal aktif di folder ./data`);
-  console.log(`  🖨️  Mendukung Cetak Thermal 58mm/80mm & High-DPI PNG`);
-  console.log('  Tekan Ctrl + C di terminal untuk mematikan server.');
+  console.log(`  Alamat: http://localhost:${PORT}`);
+  console.log(`  Database SQLite 3 aktif di data/database.sqlite`);
+  console.log(`  Pengaturan Toko aktif di data/config.json`);
+  console.log(`  Mendukung Cetak Thermal 58mm/80mm dan Ekspor Gambar`);
+  console.log('  Tekan Ctrl + C di terminal untuk menghentikan server.');
   console.log('====================================================');
 });

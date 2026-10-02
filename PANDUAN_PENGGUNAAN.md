@@ -179,9 +179,9 @@ Jika pembeli tidak ingin struk fisik atau berbelanja secara daring (online):
    - Ikon tempat sampah: Untuk menghapus catatan transaksi jika diperlukan.
 
 ### 8.2 Mencadangkan Data Toko (Backup Data)
-Seluruh data toko (profil, daftar barang, dan transaksi) disimpan di komputer Anda dalam bentuk berkas JSON lokal. Agar data tetap aman:
+Seluruh data toko (profil, daftar barang, dan transaksi) disimpan di komputer Anda dalam basis data SQLite 3 dan berkas konfigurasi lokal. Agar data tetap aman:
 1. Buka tab **Pengaturan**.
-2. Gulir ke bagian paling bawah pada kartu **Cadangan Data Toko**.
-3. Klik tombol **Download Salinan Data**.
-4. Berkas cadangan berekstensi `.json` akan tersimpan di komputer Anda.
+2. Gulir ke bagian paling bawah pada kartu **Cadangan Data Toko (Backup ZIP)**.
+3. Klik tombol **Download Salinan Data (.ZIP)**.
+4. Berkas cadangan arsip berekstensi `.zip` (berisi `database.sqlite` dan `config.json`) akan tersimpan di komputer Anda.
 5. Pindahkan berkas cadangan tersebut ke flashdisk atau penyimpanan awan Anda sebagai arsip cadangan berkala.

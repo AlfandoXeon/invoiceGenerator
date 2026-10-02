@@ -201,22 +201,60 @@
       </div>
     </div>
 
-    <!-- BAGIAN 5: CADANGAN BERKAS DATA -->
-    <div class="clean-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4" data-aos="fade-up" data-aos-delay="200">
+    <!-- BAGIAN 5: CADANGAN & PEMULIHAN BERKAS DATA -->
+    <div class="clean-card p-5 space-y-5" data-aos="fade-up" data-aos-delay="200">
       <div>
-        <h4 class="font-bold text-sm text-slate-900 flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-600 text-lg">download</span>
-          <span>Cadangan Data Toko (Backup)</span>
-        </h4>
-        <p class="text-xs text-slate-500 mt-1">
-          Unduh salinan data produk dan transaksi untuk disimpan di flashdisk atau dipindah ke komputer lain.
+        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+          <span class="material-symbols-outlined text-slate-600 text-lg">backup</span>
+          <span>Cadangan & Pemulihan Data Toko (ZIP)</span>
+        </h3>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Kelola salinan data toko offline Anda dalam format berkas ZIP (berisi basis data SQLite dan pengaturan toko).
         </p>
       </div>
 
-      <a href="/settings/backup" class="clean-btn-secondary text-xs py-2 px-4 whitespace-nowrap">
-        <span class="material-symbols-outlined text-base">file_download</span>
-        <span>Download Salinan Data</span>
-      </a>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+        
+        <!-- Kolom Ekspor / Unduh -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between gap-3">
+          <div>
+            <h4 class="font-semibold text-xs text-slate-800 flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-slate-500 text-base">download</span>
+              <span>Ekspor Salinan Cadangan</span>
+            </h4>
+            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+              Unduh berkas ZIP yang memuat seluruh katalog produk, riwayat penjualan, dan pengaturan toko untuk disimpan di flashdisk.
+            </p>
+          </div>
+
+          <a href="/settings/backup" class="clean-btn-secondary text-xs py-2 px-3 text-center flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">file_download</span>
+            <span>Download Salinan Data (.ZIP)</span>
+          </a>
+        </div>
+
+        <!-- Kolom Impor / Pulihkan -->
+        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between gap-3">
+          <div>
+            <h4 class="font-semibold text-xs text-slate-800 flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-slate-500 text-base">upload</span>
+              <span>Impor / Pulihkan Data dari ZIP</span>
+            </h4>
+            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+              Pulihkan konfigurasi toko serta basis data SQLite dari berkas ZIP yang pernah diekspor sebelumnya.
+            </p>
+          </div>
+
+          <div>
+            <input type="file" id="input-backup-zip" accept=".zip" class="hidden" onchange="handleRestoreZipFile(event)">
+            <button type="button" onclick="document.getElementById('input-backup-zip').click()" id="btn-trigger-restore" class="clean-btn-primary w-full text-xs py-2 px-3 flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-sm">upload_file</span>
+              <span>Pilih & Pulihkan dari ZIP</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </main>
@@ -244,6 +282,72 @@
       const names = { light: 'Terang Bersih', warm: 'Krem Lembut', slate: 'Abu Minimalis', dark: 'Gelap Halus' };
       if (typeof showToast === 'function') {
         showToast(`Tema ${names[themeName] || themeName} aktif`, 'info', 1500);
+      }
+    }
+
+    async function handleRestoreZipFile(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      if (!file.name.toLowerCase().endsWith('.zip')) {
+        if (typeof showToast === 'function') {
+          showToast('Format berkas harus berekstensi .ZIP', 'warning');
+        } else {
+          alert('Format berkas harus berekstensi .ZIP');
+        }
+        event.target.value = '';
+        return;
+      }
+
+      const confirmMsg = 'Perhatian: Memulihkan cadangan akan menimpa seluruh produk, riwayat transaksi, dan konfigurasi saat ini dengan isi dari berkas ZIP (' + file.name + ').\\n\\nApakah Anda yakin ingin melanjutkan pemulihan?';
+      if (!confirm(confirmMsg)) {
+        event.target.value = '';
+        return;
+      }
+
+      const btn = document.getElementById('btn-trigger-restore');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `
+        <span class="material-symbols-outlined text-sm animate-spin">refresh</span>
+        <span>Memulihkan data...</span>
+      `;
+
+      try {
+        const formData = new FormData();
+        formData.append('backupZip', file);
+
+        const response = await fetch('/settings/restore', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: formData
+        });
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.message || 'Gagal memulihkan cadangan');
+        }
+
+        if (typeof showToast === 'function') {
+          showToast('Data toko dan basis data berhasil dipulihkan! Halaman akan dimuat ulang...', 'success', 3000);
+        } else {
+          alert('Data toko dan basis data berhasil dipulihkan!');
+        }
+
+        setTimeout(() => {
+          window.location.href = '/settings?restored=true';
+        }, 1500);
+
+      } catch (err) {
+        console.error('Error restore zip:', err);
+        if (typeof showToast === 'function') {
+          showToast('Gagal memulihkan: ' + err.message, 'error');
+        } else {
+          alert('Gagal memulihkan: ' + err.message);
+        }
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        event.target.value = '';
       }
     }
   </script>

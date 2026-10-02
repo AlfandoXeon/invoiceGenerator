@@ -1,6 +1,7 @@
 const BaseController = require('./BaseController');
 const Transaction = require('../models/Transaction');
 const StoreConfig = require('../models/StoreConfig');
+const Product = require('../models/Product');
 
 /**
  * HistoryController - Mengelola riwayat transaksi penjualan & pencetakan ulang
@@ -55,17 +56,27 @@ class HistoryController extends BaseController {
   }
 
   /**
-   * API: Menghapus catatan transaksi
+   * API: Menghapus catatan transaksi dan mengembalikan stok
    */
   async deleteTransaction(req, res) {
     try {
       const { id } = req.params;
-      const success = await Transaction.delete(id);
-      if (!success) {
+      const transaction = await Transaction.getById(id);
+      if (!transaction) {
         return this.sendError(res, 'Transaksi tidak ditemukan', 404);
       }
 
-      return this.sendSuccess(res, null, 'Catatan transaksi berhasil dihapus');
+      // Kembalikan stok produk jika transaksi memiliki daftar item
+      if (Array.isArray(transaction.items) && transaction.items.length > 0) {
+        await Product.restoreStock(transaction.items);
+      }
+
+      const success = await Transaction.delete(id);
+      if (!success) {
+        return this.sendError(res, 'Gagal menghapus transaksi', 500);
+      }
+
+      return this.sendSuccess(res, null, 'Catatan transaksi berhasil dihapus dan stok barang telah dikembalikan');
     } catch (error) {
       return this.sendError(res, error.message);
     }

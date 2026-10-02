@@ -1,36 +1,40 @@
-const path = require('path');
-const JsonStorage = require('./JsonStorage');
+const Database = require('./Database');
 const StoreConfig = require('./StoreConfig');
 
 /**
- * Transaction Model - OOP Entity untuk pencatatan riwayat transaksi & invoice UMKM
+ * Transaction Model - OOP Entity untuk pencatatan riwayat transaksi dengan database SQLite 3
  */
 class Transaction {
-  static get filePath() {
-    return path.join(__dirname, '../../data/transactions.json');
-  }
-
   /**
-   * Mengambil semua riwayat transaksi
+   * Mengambil semua riwayat transaksi dari SQLite 3
    * @returns {Promise<Array>}
    */
   static async getAll() {
-    const list = await JsonStorage.read(this.filePath, []);
-    return Array.isArray(list) ? list : [];
+    const rows = await Database.all('SELECT * FROM transactions ORDER BY timestamp DESC;');
+    return rows.map(r => ({
+      ...r,
+      items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : (r.items || [])
+    }));
   }
 
   /**
-   * Mengambil transaksi berdasarkan ID
+   * Mengambil satu transaksi berdasarkan ID
    * @param {string} id
    * @returns {Promise<Object|null>}
    */
   static async getById(id) {
-    const list = await this.getAll();
-    return list.find(item => String(item.id) === String(id)) || null;
+    if (!id) return null;
+    const r = await Database.get('SELECT * FROM transactions WHERE id = ?;', [String(id)]);
+    if (!r) return null;
+
+    return {
+      ...r,
+      items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : (r.items || [])
+    };
   }
 
   /**
-   * Menghasilkan nomor nota faktur otomatis yang unik (contoh: AXS-20261002-0001)
+   * Menghasilkan nomor nota faktur otomatis yang unik (contoh: XEON-20261002-0001)
    * @returns {Promise<string>}
    */
   static async generateInvoiceNumber() {
@@ -43,28 +47,28 @@ class Transaction {
     const day = String(now.getDate()).padStart(2, '0');
     const dateStr = `${year}${month}${day}`;
 
-    const list = await this.getAll();
-    // Hitung berapa transaksi hari ini
-    const todayCount = list.filter(item => {
-      if (!item.invoiceNumber) return false;
-      return item.invoiceNumber.includes(dateStr);
-    }).length;
-
+    // Hitung berapa transaksi yang tercatat hari ini menggunakan query SQL cepat
+    const row = await Database.get(
+      'SELECT COUNT(*) as count FROM transactions WHERE invoiceNumber LIKE ?;',
+      [`%${dateStr}%`]
+    );
+    const todayCount = row ? row.count : 0;
     const sequence = String(todayCount + 1).padStart(4, '0');
     return `${prefix}${dateStr}-${sequence}`;
   }
 
   /**
-   * Menyimpan transaksi penjualan baru
+   * Menyimpan transaksi penjualan baru ke SQLite 3
    * @param {Object} data
    * @returns {Promise<Object>}
    */
   static async create(data) {
-    const list = await this.getAll();
     const config = await StoreConfig.get();
-
     const now = new Date();
     const invoiceNumber = data.invoiceNumber || await this.generateInvoiceNumber();
+
+    const items = Array.isArray(data.items) ? data.items : [];
+    const itemsJson = JSON.stringify(items);
 
     const newTransaction = {
       id: `trx_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
@@ -80,7 +84,7 @@ class Transaction {
         hour12: false
       }).replace('.', ':'),
       cashier: (data.cashier || config.pos.defaultCashier || 'Kasir').trim(),
-      items: Array.isArray(data.items) ? data.items : [],
+      items: items,
       subtotal: parseFloat(data.subtotal) || 0,
       discount: parseFloat(data.discount) || 0,
       taxPercent: parseFloat(data.taxPercent) || 0,
@@ -92,8 +96,30 @@ class Transaction {
       note: (data.note || '').trim()
     };
 
-    list.unshift(newTransaction);
-    await JsonStorage.write(this.filePath, list);
+    await Database.run(`
+      INSERT INTO transactions (
+        id, invoiceNumber, timestamp, formattedDate, cashier, items,
+        subtotal, discount, taxPercent, taxAmount, grandTotal,
+        paymentMethod, cashReceived, change, note
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `, [
+      newTransaction.id,
+      newTransaction.invoiceNumber,
+      newTransaction.timestamp,
+      newTransaction.formattedDate,
+      newTransaction.cashier,
+      itemsJson,
+      newTransaction.subtotal,
+      newTransaction.discount,
+      newTransaction.taxPercent,
+      newTransaction.taxAmount,
+      newTransaction.grandTotal,
+      newTransaction.paymentMethod,
+      newTransaction.cashReceived,
+      newTransaction.change,
+      newTransaction.note
+    ]);
+
     return newTransaction;
   }
 
@@ -103,20 +129,15 @@ class Transaction {
    * @returns {Promise<boolean>}
    */
   static async delete(id) {
-    const list = await this.getAll();
-    const filtered = list.filter(item => String(item.id) !== String(id));
-    if (filtered.length === list.length) return false;
-
-    await JsonStorage.write(this.filePath, filtered);
-    return true;
+    const result = await Database.run('DELETE FROM transactions WHERE id = ?;', [String(id)]);
+    return result.changes > 0;
   }
 
   /**
-   * Menghitung statistik penjualan sederhana (Hari ini & Total)
+   * Menghitung statistik penjualan secara instan dengan agregasi SQL
    * @returns {Promise<Object>}
    */
   static async getStats() {
-    const list = await this.getAll();
     const now = new Date();
     const todayDate = now.toLocaleDateString('id-ID', {
       day: '2-digit',
@@ -124,23 +145,20 @@ class Transaction {
       year: 'numeric'
     });
 
-    let todaySales = 0;
-    let todayCount = 0;
-    let totalSales = 0;
+    const todayStats = await Database.get(
+      'SELECT COALESCE(SUM(grandTotal), 0) as todaySales, COUNT(*) as todayCount FROM transactions WHERE formattedDate LIKE ?;',
+      [`${todayDate}%`]
+    );
 
-    for (const trx of list) {
-      totalSales += (trx.grandTotal || 0);
-      if (trx.formattedDate && trx.formattedDate.startsWith(todayDate)) {
-        todaySales += (trx.grandTotal || 0);
-        todayCount++;
-      }
-    }
+    const totalStats = await Database.get(
+      'SELECT COALESCE(SUM(grandTotal), 0) as totalSales, COUNT(*) as totalCount FROM transactions;'
+    );
 
     return {
-      todaySales,
-      todayCount,
-      totalSales,
-      totalCount: list.length
+      todaySales: todayStats ? todayStats.todaySales : 0,
+      todayCount: todayStats ? todayStats.todayCount : 0,
+      totalSales: totalStats ? totalStats.totalSales : 0,
+      totalCount: totalStats ? totalStats.totalCount : 0
     };
   }
 }

@@ -12,17 +12,17 @@ class StoreConfig {
   static get defaultData() {
     return {
       store: {
-        name: "HOKI APP",
+        name: "Xeon Store",
         tagline: "Belanja Puas, Harga Pas!",
-        address: "Jl. Raya Informatika No. 101, Salatiga",
+        address: "Jalan Raya Metro-Wates, Bumi Agung, Bumi Ratu Nuban, Lampung Tengah, Lampung, Indonesia",
         phone: "085764175824",
-        email: "kontak@xeonstore.local",
+        email: "xeonstr@gmail.com",
         logoUrl: "",
         useLogoOnReceipt: true
       },
       pos: {
-        defaultCashier: "HOKI",
-        cashiers: ["HOKI", "Kasir 1", "Owner"],
+        defaultCashier: "Xeon",
+        cashiers: ["Xeon", "Kasir 1", "Owner"],
         theme: "light",
         invoicePrefix: "AX-",
         defaultTaxPercent: 10,
