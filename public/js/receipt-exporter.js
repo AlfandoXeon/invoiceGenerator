@@ -145,7 +145,35 @@ class ReceiptExporter {
   }
 
   /**
-   * Cetak langsung struk ke printer
+   * Terapkan aturan @page CSS dinamis agar ukuran kertas printer / dialog cetak
+   * secara otomatis mengikuti ukuran roll dari aplikasi (58mm atau 80mm)
+   */
+  static applyPrintPageStyle(paperSize = '58mm') {
+    let printStyle = document.getElementById('thermal-print-page-style');
+    if (!printStyle) {
+      printStyle = document.createElement('style');
+      printStyle.id = 'thermal-print-page-style';
+      document.head.appendChild(printStyle);
+    }
+    const width = (paperSize === '80mm') ? '80mm' : '58mm';
+    printStyle.textContent = `
+      @media print {
+        @page {
+          size: ${width} auto !important;
+          margin: 0mm !important;
+        }
+        #receipt-paper,
+        .receipt-paper-container {
+          margin: 0 auto !important;
+          width: ${width} !important;
+          max-width: ${width} !important;
+        }
+      }
+    `;
+  }
+
+  /**
+   * Cetak langsung struk ke printer thermal
    * @param {string} paperSize - '58mm' atau '80mm'
    */
   static printDirect(paperSize = '58mm') {
@@ -155,14 +183,23 @@ class ReceiptExporter {
       return;
     }
 
+    // Terapkan class ukuran kertas pada elemen struk & body
     if (paperSize === '80mm') {
       printWrapper.classList.remove('paper-58mm');
       printWrapper.classList.add('paper-80mm');
+      document.body.classList.remove('print-58mm');
+      document.body.classList.add('print-80mm');
     } else {
       printWrapper.classList.remove('paper-80mm');
       printWrapper.classList.add('paper-58mm');
+      document.body.classList.remove('print-80mm');
+      document.body.classList.add('print-58mm');
     }
 
+    // Terapkan ukuran @page cetak ke dokumen agar browser langsung memilih ukuran kertas yang tepat
+    this.applyPrintPageStyle(paperSize);
+
+    // Panggil window.print secara langsung (sinkron) agar DOM struk tidak terlanjur dibersihkan
     window.print();
   }
 }

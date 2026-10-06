@@ -6,24 +6,33 @@
   <link rel="stylesheet" href="/css/print-thermal.css">
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   <style>
+    @page {
+      size: <%= config.pos.paperSize === '80mm' ? '80mm' : '58mm' %> auto;
+      margin: 0mm;
+    }
     body {
       margin: 0;
-      padding: 10px;
-      background: #f8fafc;
+      padding: 0;
+      background: #ffffff;
       font-family: 'Courier Prime', monospace;
     }
     .print-container {
-      background: white;
+      background: #ffffff;
       margin: 0 auto;
-      padding: 15px;
-      width: <%= config.pos.paperSize === '80mm' ? '72mm' : '48mm' %>;
-      color: black;
-      font-size: 11px;
+      padding: <%= config.pos.paperSize === '80mm' ? '2.5mm 3.5mm' : '1.5mm 2.5mm' %>;
+      width: <%= config.pos.paperSize === '80mm' ? '80mm' : '58mm' %>;
+      max-width: <%= config.pos.paperSize === '80mm' ? '80mm' : '58mm' %>;
+      box-sizing: border-box;
+      color: #000000;
+      font-size: <%= config.pos.paperSize === '80mm' ? '9.5pt' : '8.5pt' %>;
+      box-shadow: none !important;
+      border: none !important;
+      border-radius: 0 !important;
     }
   </style>
 </head>
-<body onload="window.print()">
-  <div class="print-container thermal-receipt">
+<body onload="setTimeout(() => window.print(), 100)">
+  <div class="print-container thermal-receipt <%= config.pos.paperSize === '80mm' ? 'paper-80mm' : 'paper-58mm' %>">
     <div style="text-align: center; margin-bottom: 8px;">
       <h2 style="margin: 0; font-size: 14px; font-weight: bold; text-transform: uppercase;"><%= config.store.name %></h2>
       <% if (config.store.tagline) { %>

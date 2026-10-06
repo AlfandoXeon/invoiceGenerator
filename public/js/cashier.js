@@ -105,6 +105,11 @@ const CashierApp = {
         btn80.classList.add('text-[var(--color-text-muted)]');
       }
     }
+
+    // Sinkronkan CSS @page cetak printer sejak awal
+    if (typeof ReceiptExporter !== 'undefined' && typeof ReceiptExporter.applyPrintPageStyle === 'function') {
+      ReceiptExporter.applyPrintPageStyle(size);
+    }
   },
 
   formatRupiah(num) {
@@ -794,29 +799,50 @@ const CashierApp = {
         }
       }
 
+      // Pastikan struk dirender lengkap dengan item belanjaan saat ini
+      this.render();
+
+      const resetTransactionState = async () => {
+        if (saveToDb) {
+          await this.fetchNextInvoice();
+          this.state.items = [];
+          this.state.discount = 0;
+          this.state.cashReceived = 0;
+          const cashInput = document.getElementById('input-cash');
+          if (cashInput) {
+            cashInput.value = 0;
+            cashInput.readOnly = false;
+            cashInput.classList.remove('opacity-75');
+          }
+          const discInput = document.getElementById('input-discount');
+          if (discInput) discInput.value = 0;
+          this.render();
+        }
+      };
+
       // Lakukan aksi cetak fisik atau unduh gambar
       if (this.state.pendingActionType === 'png') {
         await ReceiptExporter.exportToPng('receipt-paper', this.state.invoiceNumber, storeName);
+        await resetTransactionState();
       } else {
         const size = this.state.paperSize || this.config.pos?.paperSize || '58mm';
-        ReceiptExporter.printDirect(size);
-      }
 
-      // Bersihkan dan siapkan nota selanjutnya jika disimpan ke DB
-      if (saveToDb) {
-        await this.fetchNextInvoice();
-        this.state.items = [];
-        this.state.discount = 0;
-        this.state.cashReceived = 0;
-        const cashInput = document.getElementById('input-cash');
-        if (cashInput) {
-          cashInput.value = 0;
-          cashInput.readOnly = false;
-          cashInput.classList.remove('opacity-75');
-        }
-        const discInput = document.getElementById('input-discount');
-        if (discInput) discInput.value = 0;
-        this.render();
+        let hasReset = false;
+        const handleAfterPrint = async () => {
+          if (!hasReset) {
+            hasReset = true;
+            window.removeEventListener('afterprint', handleAfterPrint);
+            await resetTransactionState();
+          }
+        };
+
+        window.addEventListener('afterprint', handleAfterPrint, { once: true });
+
+        // Cetak struk ke printer
+        ReceiptExporter.printDirect(size);
+
+        // Fallback panggil reset setelah dialog print ditutup
+        setTimeout(handleAfterPrint, 1500);
       }
 
     } catch (error) {
