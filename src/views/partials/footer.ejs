@@ -1,13 +1,13 @@
-<footer class="bg-white border-t border-slate-200 py-4 text-xs text-slate-500 mt-auto">
+<footer class="border-t border-[var(--color-border)] py-4 text-xs text-[var(--color-text-muted)] mt-auto bg-[var(--color-header-bg)] transition-colors duration-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
     <div>
-      <span class="font-medium text-slate-700">
-        <%= (typeof config !== 'undefined' && config.store && config.store.name) ? config.store.name : 'Toko' %>
+      <span class="font-bold text-[var(--color-text-main)]">
+        <%= (typeof config !== 'undefined' && config.store && config.store.name) ? config.store.name : 'Xeon Store' %>
       </span>
-      <span>&copy; 2026. Aplikasi Kasir & Struk Toko.</span>
+      <span>&copy; 2026 &bull; Sistem Kasir & Struk Belanja UMKM</span>
     </div>
-    <div class="text-slate-400 text-[11px]">
-      Format Kertas: <%= (typeof config !== 'undefined' && config.pos && config.pos.paperSize) ? config.pos.paperSize : '58mm' %>
+    <div class="text-[var(--color-text-subtle)] text-[11px] font-mono">
+      <span>Standar Kertas: <%= (typeof config !== 'undefined' && config.pos && config.pos.paperSize) ? config.pos.paperSize : '58mm' %></span>
     </div>
   </div>
 </footer>

@@ -12,121 +12,140 @@
   <%- include('../partials/navigation') %>
 
   <!-- Konten Utama -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-5 sm:px-6 lg:px-8 flex flex-col gap-5">
 
-    <!-- Header Judul -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" data-aos="fade-down">
+    <!-- Header Judul & Ringkasan Metrik Omset -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4" data-aos="fade-down">
       <div>
-        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-500">receipt_long</span>
-          <span>Riwayat Penjualan</span>
+        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">receipt_long</span>
+          <span>Riwayat Transaksi Penjualan</span>
         </h2>
-        <p class="text-xs text-slate-500 mt-0.5">
-          Catatan transaksi struk penjualan yang pernah dicetak.
+        <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+          Rekap seluruh nota kasir yang pernah dicetak dan tercatat di database lokal.
         </p>
       </div>
 
-      <div class="clean-card px-4 py-2 rounded-lg text-right shadow-xs" data-aos="fade-left">
-        <span class="text-[10px] text-slate-500 font-semibold block">Total Penjualan</span>
-        <span class="font-bold font-mono text-sm sm:text-base"><%= formatRupiah(stats.totalSales) %></span>
+      <!-- Kartu Ringkasan Metrik -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full md:w-auto">
+        <div class="pos-card px-3.5 py-2">
+          <span class="text-[10px] text-[var(--color-text-muted)] font-semibold block">Total Omset</span>
+          <span class="font-bold font-mono text-sm sm:text-base" style="color: var(--color-primary)"><%= formatRupiah(stats.totalSales) %></span>
+        </div>
+
+        <div class="pos-card px-3.5 py-2">
+          <span class="text-[10px] text-[var(--color-text-muted)] font-semibold block">Total Transaksi</span>
+          <span class="font-bold font-mono text-sm sm:text-base text-[var(--color-text-main)]"><%= stats.totalCount %> Nota</span>
+        </div>
+
+        <div class="pos-card px-3.5 py-2 col-span-2 sm:col-span-1">
+          <span class="text-[10px] text-[var(--color-text-muted)] font-semibold block">Rata-rata Nota</span>
+          <span class="font-bold font-mono text-xs sm:text-sm text-[var(--color-text-main)]">
+            <%= formatRupiah(stats.totalCount > 0 ? Math.round(stats.totalSales / stats.totalCount) : 0) %>
+          </span>
+        </div>
       </div>
     </div>
 
-    <!-- Kolom Pencarian -->
-    <div class="clean-card p-3.5 flex justify-between items-center gap-3" data-aos="fade-up">
-      <div class="relative w-full sm:w-72">
-        <input type="text" id="search-history" oninput="filterHistory(this.value)" placeholder="Cari nomor nota atau kasir..." class="clean-input pl-8 text-xs">
-        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-base">search</span>
+    <!-- Kolom Pencarian & Filter Cepat -->
+    <div class="pos-card p-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3" data-aos="fade-up">
+      <div class="relative w-full sm:w-80">
+        <input type="text" id="search-history" oninput="filterHistory(this.value)" placeholder="Cari nomor nota, kasir, tanggal..." class="pos-input pl-8 text-xs font-mono">
+        <span class="material-symbols-outlined absolute left-2.5 top-2.5 text-[var(--color-text-subtle)] text-base" aria-hidden="true">search</span>
       </div>
-      <div class="text-xs text-slate-500">
-        Total: <span class="font-bold"><%= transactions.length %></span> Nota
+
+      <div class="text-xs text-[var(--color-text-muted)] flex items-center gap-1.5 self-end sm:self-center">
+        <span>Total Tercatat:</span>
+        <span id="history-count-badge" class="font-bold font-mono text-[var(--color-text-main)]"><%= transactions.length %></span>
+        <span>Nota</span>
       </div>
     </div>
 
-    <!-- Tabel Riwayat -->
-    <div class="clean-card overflow-hidden" data-aos="fade-up" data-aos-delay="80">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+    <!-- Tabel Riwayat Penjualan -->
+    <div class="pos-table-wrapper" data-aos="fade-up" data-aos-delay="60">
+      <table class="pos-table">
+        <thead>
+          <tr>
+            <th class="py-3 px-4">Waktu Transaksi</th>
+            <th class="py-3 px-4">Nomor Nota</th>
+            <th class="py-3 px-4">Petugas Kasir</th>
+            <th class="py-3 px-4">Metode Bayar</th>
+            <th class="py-3 px-4 text-center">Variasi Barang</th>
+            <th class="py-3 px-4 text-right">Total Belanja</th>
+            <th class="py-3 px-4 text-center w-28">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="history-table-body" class="divide-y divide-[var(--color-border-subtle)]">
+          <% if (transactions.length === 0) { %>
             <tr>
-              <th class="py-2.5 px-4">Waktu</th>
-              <th class="py-2.5 px-4">Nomor Nota</th>
-              <th class="py-2.5 px-4">Kasir</th>
-              <th class="py-2.5 px-4">Pembayaran</th>
-              <th class="py-2.5 px-4 text-center">Jumlah Barang</th>
-              <th class="py-2.5 px-4 text-right">Total Belanja</th>
-              <th class="py-2.5 px-4 text-center w-28">Pilihan</th>
+              <td colspan="7" class="py-12 text-center text-[var(--color-text-subtle)]">
+                <span class="material-symbols-outlined text-4xl block mb-2 opacity-50" aria-hidden="true">receipt</span>
+                <p class="font-semibold text-xs">Belum ada transaksi penjualan yang tercatat.</p>
+                <p class="text-[11px] opacity-75 mt-0.5">Lakukan transaksi di menu Kasir untuk menghasilkan riwayat.</p>
+              </td>
             </tr>
-          </thead>
-          <tbody id="history-table-body" class="divide-y divide-slate-100">
-            <% if (transactions.length === 0) { %>
-              <tr>
-                <td colspan="7" class="py-10 text-center text-slate-400">
-                  <span class="material-symbols-outlined text-3xl block mb-1 text-slate-300">receipt</span>
-                  <p class="font-medium text-xs">Belum ada riwayat penjualan.</p>
+          <% } else { %>
+            <% transactions.forEach(function(trx) { %>
+              <tr class="history-row transition" data-search="<%= (trx.invoiceNumber + ' ' + trx.cashier + ' ' + trx.formattedDate + ' ' + trx.paymentMethod).toLowerCase() %>">
+                <td class="py-3 px-4 font-mono text-[var(--color-text-muted)] text-xs"><%= trx.formattedDate %></td>
+                <td class="py-3 px-4 font-bold font-mono text-xs text-[var(--color-text-main)]"><%= trx.invoiceNumber %></td>
+                <td class="py-3 px-4 text-[var(--color-text-main)]"><%= trx.cashier %></td>
+                <td class="py-3 px-4">
+                  <span class="pos-badge pos-badge-neutral font-medium">
+                    <%= trx.paymentMethod %>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center text-[var(--color-text-muted)] font-mono text-xs">
+                  <%= trx.items ? trx.items.length : 0 %> macam
+                </td>
+                <td class="py-3 px-4 text-right font-mono font-bold text-xs sm:text-sm text-[var(--color-text-main)]">
+                  <%= formatRupiah(trx.grandTotal) %>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <div class="inline-flex items-center gap-1">
+                    <!-- Cetak Ulang -->
+                    <a href="/history/print/<%= trx.id %>" target="_blank" class="p-1 rounded text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-subtle)] transition" title="Cetak Ulang Thermal">
+                      <span class="material-symbols-outlined text-base" aria-hidden="true">print</span>
+                    </a>
+                    <!-- Detail Modal -->
+                    <button type="button" onclick="showTransactionDetail('<%= trx.id %>')" class="p-1 rounded text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-subtle)] transition" title="Lihat Rincian Nota">
+                      <span class="material-symbols-outlined text-base" aria-hidden="true">visibility</span>
+                    </button>
+                    <!-- Hapus -->
+                    <button type="button" onclick="deleteTransaction('<%= trx.id %>', '<%= trx.invoiceNumber %>')" class="p-1 rounded text-[var(--color-text-subtle)] hover:text-[var(--color-destructive)] hover:bg-[var(--color-destructive-subtle)] transition" title="Hapus Transaksi & Kembalikan Stok">
+                      <span class="material-symbols-outlined text-base" aria-hidden="true">delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
-            <% } else { %>
-              <% transactions.forEach(function(trx) { %>
-                <tr class="history-row transition" data-search="<%= (trx.invoiceNumber + ' ' + trx.cashier + ' ' + trx.formattedDate).toLowerCase() %>">
-                  <td class="py-3 px-4 font-mono text-slate-500 text-[11px]"><%= trx.formattedDate %></td>
-                  <td class="py-3 px-4 font-bold font-mono"><%= trx.invoiceNumber %></td>
-                  <td class="py-3 px-4"><%= trx.cashier %></td>
-                  <td class="py-3 px-4">
-                    <span class="px-2 py-0.5 rounded text-[11px] bg-slate-100 border border-slate-200 font-medium text-slate-700">
-                      <%= trx.paymentMethod %>
-                    </span>
-                  </td>
-                  <td class="py-3 px-4 text-center text-slate-600 font-mono">
-                    <%= trx.items ? trx.items.length : 0 %> jenis
-                  </td>
-                  <td class="py-3 px-4 text-right font-mono font-bold text-sm">
-                    <%= formatRupiah(trx.grandTotal) %>
-                  </td>
-                  <td class="py-3 px-4 text-center">
-                    <div class="inline-flex items-center gap-1">
-                      <!-- Cetak Ulang -->
-                      <a href="/history/print/<%= trx.id %>" target="_blank" class="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition" title="Cetak Ulang">
-                        <span class="material-symbols-outlined text-base">print</span>
-                      </a>
-                      <!-- Detail Modal -->
-                      <button type="button" onclick="showTransactionDetail('<%= trx.id %>')" class="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition" title="Lihat Rincian">
-                        <span class="material-symbols-outlined text-base">visibility</span>
-                      </button>
-                      <!-- Hapus -->
-                      <button type="button" onclick="deleteTransaction('<%= trx.id %>', '<%= trx.invoiceNumber %>')" class="p-1 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus">
-                        <span class="material-symbols-outlined text-base">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              <% }); %>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
     </div>
 
   </main>
 
   <!-- MODAL DETAIL TRANSAKSI -->
-  <div id="detail-modal" class="fixed inset-0 z-50 bg-black/40 hidden items-center justify-center p-4">
-    <div class="clean-card w-full max-w-md p-6 relative shadow-xl max-h-[90vh] overflow-y-auto" data-aos="zoom-in" data-aos-duration="250">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-        <h3 class="font-bold text-sm sm:text-base">
-          Rincian Nota Penjualan
+  <div id="detail-modal" class="pos-modal-backdrop hidden items-center justify-center p-4">
+    <div class="pos-modal-card p-5 sm:p-6 relative max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-[var(--color-border-subtle)]">
+        <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)] flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">receipt</span>
+          <span>Rincian Nota Penjualan</span>
         </h3>
-        <button type="button" onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600">
-          <span class="material-symbols-outlined">close</span>
+        <button type="button" onclick="closeDetailModal()" class="p-1 rounded text-[var(--color-text-subtle)] hover:text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
       </div>
 
       <div id="detail-content" class="space-y-3.5 text-xs">
-        <div class="text-center py-6 text-slate-400">Memuat rincian nota...</div>
+        <div class="text-center py-6 text-[var(--color-text-subtle)]">Memuat rincian nota...</div>
       </div>
 
-      <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end gap-2" id="detail-actions">
-        <button type="button" onclick="closeDetailModal()" class="clean-btn-secondary text-xs">Tutup</button>
+      <div class="mt-4 pt-3 border-t border-[var(--color-border-subtle)] flex justify-between items-center" id="detail-actions">
+        <button type="button" onclick="closeDetailModal()" class="pos-btn pos-btn-secondary text-xs">Tutup (Esc)</button>
       </div>
     </div>
   </div>
@@ -139,19 +158,27 @@
 
   <script>
     function filterHistory(query) {
-      const q = query.toLowerCase().trim();
+      const q = (query || '').toLowerCase().trim();
       const rows = document.querySelectorAll('.history-row');
+      let count = 0;
       rows.forEach(r => {
         const text = r.getAttribute('data-search') || '';
-        r.style.display = text.includes(q) ? '' : 'none';
+        if (!q || text.includes(q)) {
+          r.style.display = '';
+          count++;
+        } else {
+          r.style.display = 'none';
+        }
       });
+      const badge = document.getElementById('history-count-badge');
+      if (badge) badge.innerText = count;
     }
 
     async function showTransactionDetail(id) {
       const modal = document.getElementById('detail-modal');
       const content = document.getElementById('detail-content');
       modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      modal.classList.add('flex', 'active');
 
       try {
         const res = await fetch(`/api/transactions/${id}`);
@@ -159,109 +186,118 @@
         if (!json.success || !json.data) throw new Error(json.message);
 
         const trx = json.data;
+        const formatRp = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
+
         content.innerHTML = `
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-mono space-y-1">
+          <div class="p-3.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] font-mono space-y-1.5 text-xs">
             <div class="flex justify-between">
-              <span class="text-slate-500">Nomor Nota:</span>
-              <span class="font-bold">${trx.invoiceNumber}</span>
+              <span class="text-[var(--color-text-muted)] font-sans">Nomor Nota:</span>
+              <span class="font-bold text-[var(--color-text-main)]">${trx.invoiceNumber}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-500">Waktu:</span>
-              <span>${trx.formattedDate}</span>
+              <span class="text-[var(--color-text-muted)] font-sans">Waktu:</span>
+              <span class="text-[var(--color-text-main)]">${trx.formattedDate}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-500">Kasir:</span>
-              <span>${trx.cashier}</span>
+              <span class="text-[var(--color-text-muted)] font-sans">Kasir:</span>
+              <span class="text-[var(--color-text-main)]">${trx.cashier}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-500">Pembayaran:</span>
-              <span class="font-bold">${trx.paymentMethod}</span>
+              <span class="text-[var(--color-text-muted)] font-sans">Pembayaran:</span>
+              <span class="font-bold text-[var(--color-text-main)]">${trx.paymentMethod}</span>
             </div>
           </div>
 
-          <div class="border border-slate-200 rounded-lg overflow-hidden">
-            <table class="w-full text-left">
-              <thead class="bg-slate-50 text-slate-500 text-[10px] font-bold uppercase border-b border-slate-200">
+          <div class="border border-[var(--color-border)] rounded-xl overflow-hidden bg-[var(--color-bg-card)]">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)] text-[10px] font-bold uppercase border-b border-[var(--color-border)]">
                 <tr>
-                  <th class="py-2 px-3">Barang</th>
-                  <th class="py-2 px-2 text-center">Jumlah</th>
-                  <th class="py-2 px-3 text-right">Subtotal</th>
+                  <th class="py-2.5 px-3">Nama Barang</th>
+                  <th class="py-2.5 px-2 text-center">Jumlah</th>
+                  <th class="py-2.5 px-3 text-right">Subtotal</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-100">
+              <tbody class="divide-y divide-[var(--color-border-subtle)]">
                 ${trx.items.map(item => `
                   <tr>
-                    <td class="py-2 px-3 font-medium">${item.name}</td>
-                    <td class="py-2 px-2 text-center font-mono">${item.qty}</td>
-                    <td class="py-2 px-3 text-right font-mono font-bold">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price * item.qty)}</td>
+                    <td class="py-2 px-3 font-medium text-[var(--color-text-main)]">${item.name}</td>
+                    <td class="py-2 px-2 text-center font-mono text-[var(--color-text-muted)]">${item.qty}</td>
+                    <td class="py-2 px-3 text-right font-mono font-bold text-[var(--color-text-main)]">${formatRp(item.price * item.qty)}</td>
                   </tr>
                 `).join('')}
               </tbody>
             </table>
           </div>
 
-          <div class="space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200 font-mono text-xs">
-            <div class="flex justify-between text-slate-600">
-              <span>Subtotal:</span>
-              <span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trx.subtotal)}</span>
+          <div class="space-y-1.5 p-3.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] font-mono text-xs">
+            <div class="flex justify-between text-[var(--color-text-muted)]">
+              <span class="font-sans">Subtotal:</span>
+              <span>${formatRp(trx.subtotal)}</span>
             </div>
             ${trx.discount > 0 ? `
-              <div class="flex justify-between text-slate-600">
-                <span>Diskon:</span>
-                <span>-${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trx.discount)}</span>
+              <div class="flex justify-between text-[var(--color-text-muted)]">
+                <span class="font-sans">Diskon:</span>
+                <span>-${formatRp(trx.discount)}</span>
               </div>
             ` : ''}
             ${trx.taxAmount > 0 ? `
-              <div class="flex justify-between text-slate-600">
-                <span>PPN (${trx.taxPercent}%):</span>
-                <span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trx.taxAmount)}</span>
+              <div class="flex justify-between text-[var(--color-text-muted)]">
+                <span class="font-sans">PPN (${trx.taxPercent}%):</span>
+                <span>${formatRp(trx.taxAmount)}</span>
               </div>
             ` : ''}
-            <div class="flex justify-between font-bold text-sm pt-1 border-t border-slate-200">
-              <span>Total Belanja:</span>
-              <span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trx.grandTotal)}</span>
+            <div class="flex justify-between font-bold text-sm pt-1.5 border-t border-[var(--color-border)] text-[var(--color-text-main)]">
+              <span class="font-sans">Total Belanja:</span>
+              <span style="color: var(--color-primary)">${formatRp(trx.grandTotal)}</span>
             </div>
-            <div class="flex justify-between text-slate-600 pt-0.5">
-              <span>Uang Diterima:</span>
-              <span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trx.cashReceived)}</span>
+            <div class="flex justify-between text-[var(--color-text-muted)] pt-0.5">
+              <span class="font-sans">Uang Diterima:</span>
+              <span>${formatRp(trx.cashReceived)}</span>
             </div>
-            <div class="flex justify-between font-bold">
-              <span>Kembalian:</span>
-              <span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trx.change)}</span>
+            <div class="flex justify-between font-bold" style="color: var(--color-success)">
+              <span class="font-sans">Kembalian:</span>
+              <span>${formatRp(trx.change)}</span>
             </div>
           </div>
         `;
 
         document.getElementById('detail-actions').innerHTML = `
-          <button type="button" onclick="closeDetailModal()" class="clean-btn-secondary text-xs">Tutup</button>
-          <a href="/history/print/${trx.id}" target="_blank" class="clean-btn-primary text-xs flex items-center gap-1">
-            <span class="material-symbols-outlined text-sm">print</span>
-            <span>Cetak Ulang</span>
+          <button type="button" onclick="closeDetailModal()" class="pos-btn pos-btn-secondary text-xs">Tutup</button>
+          <a href="/history/print/${trx.id}" target="_blank" class="pos-btn pos-btn-primary text-xs flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm" aria-hidden="true">print</span>
+            <span>Cetak Ulang Thermal</span>
           </a>
         `;
       } catch (err) {
-        content.innerHTML = `<div class="text-center text-red-600 py-4">Gagal memuat rincian: ${err.message}</div>`;
+        content.innerHTML = `<div class="text-center text-[var(--color-destructive)] py-4">Gagal memuat rincian: ${err.message}</div>`;
       }
     }
 
     function closeDetailModal() {
       const modal = document.getElementById('detail-modal');
       modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      modal.classList.remove('flex', 'active');
     }
 
     async function deleteTransaction(id, invoiceNo) {
-      if (!confirm(`Hapus catatan nota ${invoiceNo}?`)) return;
+      if (!confirm(`Hapus catatan transaksi ${invoiceNo}?\n(Stok produk pada nota ini akan otomatis dikembalikan ke katalog)`)) return;
 
       try {
         const res = await fetch(`/api/transactions/${id}`, { method: 'DELETE' });
         const json = await res.json();
         if (!json.success) throw new Error(json.message);
-        window.location.reload();
+        if (typeof showToast === 'function') {
+          showToast('Transaksi dihapus & stok dikembalikan', 'info');
+        }
+        setTimeout(() => window.location.reload(), 350);
       } catch (err) {
         alert('Gagal menghapus: ' + err.message);
       }
     }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDetailModal();
+    });
   </script>
 </body>
 </html>

@@ -17,8 +17,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 
-<!-- html2canvas untuk Simpan Gambar Struk -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- html2canvas untuk Simpan Gambar Struk (Offline-First) -->
+<script src="/js/vendor/html2canvas.min.js"></script>
+<script>
+  if (typeof html2canvas === 'undefined') {
+    document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\\/script>');
+  }
+</script>
 
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/css/app.css">

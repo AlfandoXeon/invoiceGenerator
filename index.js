@@ -37,10 +37,11 @@ app.use('/', historyRoutes);
 app.use('/', settingsRoutes);
 app.use('/', guideRoutes);
 
-// 404 Handler - Redirect ke halaman utama kasir
-app.use((req, res) => {
-  res.redirect('/');
-});
+const { notFoundHandler, globalErrorHandler } = require('./src/middleware/errorHandler');
+
+// 404 & Centralized Error Handler
+app.use(notFoundHandler);
+app.use(globalErrorHandler);
 
 // Jalankan Server Lokal
 app.listen(PORT, async () => {

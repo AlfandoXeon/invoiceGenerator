@@ -1,6 +1,6 @@
 /**
  * RECEIPT EXPORTER - Xeon Invoice Generator
- * Ekspor Gambar Struk untuk WhatsApp & Cetak Printer
+ * Ekspor Gambar Struk untuk WhatsApp, Cetak Printer & Generator Teks WhatsApp
  */
 
 class ReceiptExporter {
@@ -13,7 +13,7 @@ class ReceiptExporter {
   static async exportToPng(elementId = 'receipt-paper', invoiceNumber = 'NOTA', storeName = 'Toko') {
     const receiptElement = document.getElementById(elementId);
     if (!receiptElement) {
-      alert('Struk tidak ditemukan');
+      if (typeof showToast === 'function') showToast('Area struk tidak ditemukan', 'warning');
       return;
     }
 
@@ -22,7 +22,7 @@ class ReceiptExporter {
     if (downloadBtn) {
       originalHtml = downloadBtn.innerHTML;
       downloadBtn.innerHTML = `
-        <span class="material-symbols-outlined text-base">hourglass_empty</span>
+        <span class="material-symbols-outlined text-base animate-spin" aria-hidden="true">progress_activity</span>
         <span>Menyimpan gambar...</span>
       `;
       downloadBtn.disabled = true;
@@ -67,11 +67,79 @@ class ReceiptExporter {
       }
     } catch (error) {
       console.error('[ReceiptExporter] Gagal simpan gambar:', error);
-      alert('Gagal membuat gambar: ' + error.message);
+      if (typeof showToast === 'function') {
+        showToast('Gagal membuat gambar: ' + error.message, 'error');
+      } else {
+        alert('Gagal membuat gambar: ' + error.message);
+      }
     } finally {
       if (downloadBtn) {
         downloadBtn.innerHTML = originalHtml;
         downloadBtn.disabled = false;
+      }
+    }
+  }
+
+  /**
+   * Format teks nota untuk dikirim ke WhatsApp pelanggan
+   */
+  static generateWhatsAppText(storeConfig, state, calc) {
+    const storeName = storeConfig?.store?.name || 'TOKO ANDA';
+    const tagline = storeConfig?.store?.tagline ? `_${storeConfig.store.tagline}_\n` : '';
+    const phone = storeConfig?.store?.phone ? `Telp: ${storeConfig.store.phone}\n` : '';
+
+    const formatIdr = (num) => new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(num || 0);
+
+    let text = `🧾 *${storeName.toUpperCase()}*\n`;
+    if (tagline) text += tagline;
+    if (phone) text += phone;
+    text += `================================\n`;
+    text += `No. Nota : *${state.invoiceNumber}*\n`;
+    text += `Tanggal  : ${new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })} ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}\n`;
+    text += `Kasir    : ${state.cashier}\n`;
+    text += `Bayar    : ${state.paymentMethod}\n`;
+    text += `--------------------------------\n`;
+    text += `*DETAIL BARANG:*\n`;
+
+    (state.items || []).forEach(item => {
+      text += `• ${item.name.toUpperCase()}\n`;
+      text += `  ${item.qty} x ${formatIdr(item.price)} = *${formatIdr(item.price * item.qty)}*\n`;
+    });
+
+    text += `--------------------------------\n`;
+    text += `Subtotal  : ${formatIdr(calc.subtotal)}\n`;
+    if (calc.discount > 0) text += `Diskon    : -${formatIdr(calc.discount)}\n`;
+    if (calc.taxAmount > 0) text += `PPN (${state.taxPercent}%) : ${formatIdr(calc.taxAmount)}\n`;
+    text += `*TOTAL     : ${formatIdr(calc.grandTotal)}*\n`;
+    text += `Bayar     : ${formatIdr(state.cashReceived)}\n`;
+    text += `Kembalian : *${formatIdr(calc.change)}*\n`;
+    text += `================================\n`;
+    text += `Terima kasih atas kunjungan Anda!\n`;
+    if (storeConfig?.pos?.footerNote) {
+      text += `\n_${storeConfig.pos.footerNote.trim()}_\n`;
+    }
+
+    return text;
+  }
+
+  /**
+   * Salin teks nota WhatsApp ke Clipboard
+   */
+  static async copyWhatsAppText(storeConfig, state, calc) {
+    try {
+      const text = this.generateWhatsAppText(storeConfig, state, calc);
+      await navigator.clipboard.writeText(text);
+      if (typeof showToast === 'function') {
+        showToast('Nota teks format WhatsApp berhasil disalin ke clipboard!', 'success');
+      }
+    } catch (err) {
+      console.error('Clipboard error:', err);
+      if (typeof showToast === 'function') {
+        showToast('Gagal menyalin teks ke clipboard: ' + err.message, 'error');
       }
     }
   }
@@ -83,7 +151,7 @@ class ReceiptExporter {
   static printDirect(paperSize = '58mm') {
     const printWrapper = document.getElementById('receipt-paper');
     if (!printWrapper) {
-      alert('Area struk tidak ditemukan');
+      if (typeof showToast === 'function') showToast('Area struk tidak ditemukan', 'warning');
       return;
     }
 

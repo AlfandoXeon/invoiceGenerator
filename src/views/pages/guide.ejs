@@ -12,39 +12,39 @@
   <%- include('../partials/navigation') %>
 
   <!-- Konten Utama -->
-  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-5 sm:px-6 lg:px-8 flex flex-col gap-5">
 
     <!-- Judul Halaman -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" data-aos="fade-down">
       <div>
-        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-500">menu_book</span>
-          <span>Buku Panduan Penggunaan Kasir</span>
+        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">menu_book</span>
+          <span>Buku Panduan Operasional Kasir</span>
         </h2>
-        <p class="text-xs text-slate-500 mt-0.5">
-          Petunjuk praktis langkah demi langkah untuk kasir dan pemilik toko.
+        <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+          Petunjuk praktis langkah demi langkah untuk kasir, operator, dan pemilik toko UMKM.
         </p>
       </div>
 
       <!-- Kotak Pencarian Topik -->
       <div class="relative w-full sm:w-64" data-aos="fade-left">
-        <input type="text" id="guide-search" oninput="filterGuide(this.value)" placeholder="Cari topik panduan..." class="clean-input pl-8 text-xs">
-        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-base">search</span>
+        <input type="text" id="guide-search" oninput="filterGuide(this.value)" placeholder="Cari topik panduan..." class="pos-input pl-8 text-xs">
+        <span class="material-symbols-outlined absolute left-2.5 top-2.5 text-[var(--color-text-subtle)] text-base" aria-hidden="true">search</span>
       </div>
     </div>
 
     <!-- Tombol Pintas Bab Panduan -->
-    <div class="clean-card p-3" data-aos="fade-up">
-      <span class="text-[11px] font-semibold text-slate-500 block mb-2">Pilih Bab Panduan:</span>
+    <div class="pos-card p-3.5" data-aos="fade-up">
+      <span class="text-[11px] font-semibold text-[var(--color-text-muted)] block mb-2">Pilih Bab Panduan:</span>
       <div class="flex flex-wrap gap-1.5 text-xs">
-        <a href="#bab-1" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 1: Menyalakan Aplikasi</a>
-        <a href="#bab-2" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 2: Profil Toko</a>
-        <a href="#bab-3" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 3: Kasir & Tema</a>
-        <a href="#bab-4" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 4: Daftar Barang</a>
-        <a href="#bab-5" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 5: Transaksi Kasir</a>
-        <a href="#bab-6" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 6: Konfirmasi Pesanan</a>
-        <a href="#bab-7" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 7: Cetak & WhatsApp</a>
-        <a href="#bab-8" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition text-slate-700 font-medium">Bab 8: Riwayat & Cadangan</a>
+        <a href="#bab-1" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 1: Menyalakan</a>
+        <a href="#bab-2" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 2: Profil Toko</a>
+        <a href="#bab-3" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 3: Kasir & Tema</a>
+        <a href="#bab-4" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 4: Daftar Barang</a>
+        <a href="#bab-5" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 5: Transaksi & Shortcut</a>
+        <a href="#bab-6" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 6: Validasi Nota</a>
+        <a href="#bab-7" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 7: Cetak & WhatsApp</a>
+        <a href="#bab-8" class="px-2.5 py-1 rounded-lg bg-[var(--color-bg-subtle)] hover:border-[var(--color-primary)] transition text-[var(--color-text-main)] border border-[var(--color-border)] font-medium">Bab 8: Riwayat & Backup</a>
       </div>
     </div>
 
@@ -52,60 +52,59 @@
     <div class="flex flex-col gap-4" id="guide-content-list">
 
       <!-- BAB 1 -->
-      <article id="bab-1" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 1 menyalakan aplikasi start bat buka terminal lokal offline localhost">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">1</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 1: Persiapan dan Menyalakan Aplikasi</h3>
+      <article id="bab-1" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 1 menyalakan aplikasi start bat buka terminal lokal offline localhost">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">1</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 1: Persiapan dan Menyalakan Aplikasi</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>Aplikasi ini dirancang untuk berjalan mandiri di komputer Anda tanpa memerlukan sambungan internet aktif.</p>
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5">
-            <span class="font-semibold text-slate-800 block">Langkah Menyalakan (1-Klik):</span>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <p>Aplikasi ini berjalan mandiri di komputer lokal Anda tanpa memerlukan koneksi internet aktif.</p>
+          <div class="bg-[var(--color-bg-subtle)] p-3 rounded-xl border border-[var(--color-border)] space-y-1.5">
+            <span class="font-semibold text-[var(--color-text-main)] block">Langkah Menyalakan (1-Klik):</span>
             <ol class="list-decimal pl-4 space-y-1">
-              <li>Buka folder utama aplikasi di komputer Anda.</li>
-              <li>Cari berkas bernama <code class="font-mono font-bold text-red-600">start.bat</code>.</li>
-              <li>Klik ganda (double-click) pada berkas <code class="font-mono font-bold text-red-600">start.bat</code>.</li>
-              <li>Jendela terminal kecil akan berjalan dan peramban (browser) akan otomatis terbuka pada alamat <code class="font-mono">http://localhost:3000</code>.</li>
-              <li>Biarkan jendela terminal tetap menyala selama kasir digunakan melayani pembeli.</li>
+              <li>Buka folder aplikasi di komputer Anda.</li>
+              <li>Klik ganda (double-click) pada berkas bernama <code class="pos-kbd text-red-600">start.bat</code>.</li>
+              <li>Jendela terminal kecil akan berjalan dan browser akan otomatis terbuka di <code class="pos-kbd">http://localhost:3000</code>.</li>
+              <li>Biarkan jendela terminal tetap menyala selama kasir melayani transaksi.</li>
             </ol>
           </div>
         </div>
       </article>
 
       <!-- BAB 2 -->
-      <article id="bab-2" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 2 profil toko identitas nama toko slogan alamat logo ukuran kertas 58mm 80mm">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">2</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 2: Mengatur Profil dan Identitas Toko</h3>
+      <article id="bab-2" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 2 profil toko identitas nama toko slogan alamat logo ukuran kertas 58mm 80mm">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">2</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 2: Mengatur Profil dan Identitas Toko</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>Sebelum mulai melayani pembeli, sesuaikan nama dan informasi toko yang akan tercetak di bagian atas struk:</p>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <p>Sebelum mulai melayani pembeli, sesuaikan informasi toko yang akan tercetak di bagian atas kertas struk:</p>
           <ol class="list-decimal pl-4 space-y-1">
-            <li>Buka tab <strong>Profil Toko</strong> di menu atas.</li>
-            <li>Isi nama toko, slogan singkat, alamat toko, dan nomor telepon/WhatsApp Anda.</li>
-            <li>Unggah logo toko dengan menekan tombol <strong>Ganti Logo</strong> (mendukung format PNG atau JPG). Beri centang pada opsi *Cetak logo toko di bagian atas struk* jika ingin logo dicetak.</li>
-            <li>Pilih ukuran kertas printer kasir Anda: <strong>58mm</strong> (printer mini kecil) atau <strong>80mm</strong> (printer kasir standar lebar).</li>
-            <li>Tulis ucapan terima kasih pada kolom pesan bawah struk, lalu klik <strong>Simpan Profil Toko</strong>.</li>
+            <li>Buka tab <strong>Profil Toko</strong> di menu navigasi atas.</li>
+            <li>Isi nama toko, slogan, alamat toko, dan nomor telepon/WhatsApp Anda.</li>
+            <li>Unggah logo toko dengan menekan tombol <strong>Unggah Logo</strong>. Centang opsi *Cetak logo toko di bagian atas struk*.</li>
+            <li>Pilih ukuran kertas printer default: <strong>58mm</strong> atau <strong>80mm</strong>.</li>
+            <li>Tulis ucapan terima kasih pada kolom footer struk, lalu klik <strong>Simpan Profil Toko</strong>.</li>
           </ol>
         </div>
       </article>
 
       <!-- BAB 3 -->
-      <article id="bab-3" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 3 kasir tema tampilan warna terang bersih krem lembut abu minimalis gelap halus malam">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">3</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 3: Mengatur Petugas Kasir dan Tema Tampilan</h3>
+      <article id="bab-3" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 3 kasir tema tampilan warna terang bersih krem lembut abu minimalis gelap halus malam">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">3</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 3: Mengatur Petugas Kasir dan Tema Tampilan</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>Pengaturan ini berada pada tab <strong>Pengaturan</strong>:</p>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <p>Buka tab <strong>Pengaturan</strong> untuk mengatur preferensi:</p>
           <ul class="list-disc pl-4 space-y-1">
-            <li><strong>Menambah Petugas Kasir</strong>: Pada kolom *Daftar Semua Kasir Toko*, tuliskan nama-nama kasir yang bertugas, satu nama per baris (misal: Ani, Budi, Owner). Kasir yang dipilih akan tercatat di nota belanja.</li>
-            <li><strong>Pilihan Tema Tampilan</strong>: Tersedia 4 pilihan tema visual yang dapat Anda pilih secara langsung:
-              <ul class="list-circle pl-4 mt-1 space-y-0.5 text-slate-500">
-                <li><em>Terang Bersih</em>: Tampilan standar latar putih bersih dengan kontras jelas.</li>
+            <li><strong>Daftar Kasir</strong>: Masukkan nama-nama kasir yang bertugas, satu nama per baris (misal: Ani, Budi, Owner).</li>
+            <li><strong>Pilihan Tema Tampilan</strong>: Tersedia 4 tema visual:
+              <ul class="list-circle pl-4 mt-1 space-y-0.5 text-[var(--color-text-subtle)]">
+                <li><em>Terang Bersih</em>: Tampilan putih modern dengan kontras tinggi.</li>
                 <li><em>Krem Lembut</em>: Warna hangat ramah di mata untuk berjaga toko berjam-jam.</li>
-                <li><em>Abu Minimalis</em>: Nuansa abu-abu netral dan modern.</li>
-                <li><em>Gelap Halus</em>: Tidak menyilaukan mata saat melayani pelanggan di malam hari.</li>
+                <li><em>Abu Minimalis</em>: Nuansa abu-abu netral elegan.</li>
+                <li><em>Gelap Elegan</em>: Bebas silau untuk kasir yang berjaga di malam hari.</li>
               </ul>
             </li>
           </ul>
@@ -113,95 +112,87 @@
       </article>
 
       <!-- BAB 4 -->
-      <article id="bab-4" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 4 daftar barang tambah produk harga jual modal barcode stok sembako satuan">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">4</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 4: Mengisi dan Mengelola Daftar Barang</h3>
+      <article id="bab-4" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 4 daftar barang tambah produk harga jual modal barcode stok sembako satuan">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">4</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 4: Mengisi dan Mengelola Daftar Barang</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>Mendaftarkan produk toko akan mempercepat pelayanan kasir karena harga akan terisi otomatis:</p>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <p>Mendaftarkan katalog barang akan mempercepat operasional kasir karena harga dan stok otomatis tersinkronisasi:</p>
           <ol class="list-decimal pl-4 space-y-1">
             <li>Buka tab <strong>Daftar Barang</strong>.</li>
-            <li>Klik tombol <strong>Tambah Barang</strong>.</li>
-            <li>Isi nama barang, kategori (misal: Sembako, Minuman), harga beli/modal, harga jual, dan jumlah stok.</li>
-            <li>Kolom kode/barcode bersifat opsional, Anda bisa menggunakan barcode scanner jika memilikinya.</li>
-            <li>Klik tombol <strong>Simpan Barang</strong>.</li>
-            <li>Untuk mengubah harga di kemudian hari, cukup klik tombol pensil di baris barang tersebut.</li>
+            <li>Klik tombol <strong>Tambah Barang Baru</strong>.</li>
+            <li>Isi nama barang, kategori, harga modal, harga jual, dan jumlah stok.</li>
+            <li>Sistem akan otomatis menghitung estimasi <strong>Laba Bersih & Persentase Margin</strong> saat Anda memasukkan harga modal dan harga jual.</li>
+            <li>Klik tombol <strong>Simpan Data Barang</strong>.</li>
           </ol>
         </div>
       </article>
 
       <!-- BAB 5 -->
-      <article id="bab-5" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 5 melayani transaksi kasir belanja keranjang uang pas diskon ppn hitung kembalian cepat">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">5</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 5: Alur Transaksi Penjualan di Menu Kasir</h3>
+      <article id="bab-5" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 5 melayani transaksi kasir belanja keranjang uang pas diskon ppn hitung kembalian cepat shortcut keyboard f2 f4 f8 f9">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">5</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 5: Transaksi Kasir Cepat & Shortcut Keyboard</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>Langkah melayani pembeli di tab <strong>Kasir</strong>:</p>
-          <ol class="list-decimal pl-4 space-y-1">
-            <li><strong>Pilih Barang</strong>: Klik tombol pada *Pilihan Cepat* atau ketik nama barang pada kolom pencarian barang, masukkan jumlah (qty), lalu tekan tombol tambah (+).</li>
-            <li><strong>Atur Kuantitas</strong>: Anda bisa menekan tombol minus (-) atau plus (+) pada tabel belanjaan untuk menyesuaikan jumlah barang belanjaan.</li>
-            <li><strong>Metode Pembayaran</strong>: Pilih Tunai, QRIS, Kartu Debit, atau Transfer.</li>
-            <li><strong>Kalkulator Kembalian</strong>: Masukkan nominal uang yang diserahkan pelanggan pada kolom *Uang Diterima*, atau tekan tombol cepat seperti `Uang Pas`, `10k`, `20k`, `50k`, `100k`. Nilai uang kembalian akan otomatis muncul di layar.</li>
-          </ol>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <p>Panduan melayani transaksi di menu <strong>Kasir</strong> dengan kecepatan maksimal:</p>
+          <div class="bg-[var(--color-bg-subtle)] p-3 rounded-xl border border-[var(--color-border)] space-y-1.5 my-2">
+            <span class="font-bold text-[var(--color-text-main)]">Tombol Pintas (Keyboard Shortcuts):</span>
+            <ul class="space-y-1 font-mono text-[11px]">
+              <li><span class="pos-kbd">F2</span> : Langsung fokus ke kolom input pencarian barang / scan barcode.</li>
+              <li><span class="pos-kbd">F4</span> : Langsung membuka konfirmasi pembayaran & cetak struk.</li>
+              <li><span class="pos-kbd">F8</span> : Fokus ke kolom diskon potongan belanja.</li>
+              <li><span class="pos-kbd">F9</span> : Mengosongkan keranjang belanjaan seketika.</li>
+              <li><span class="pos-kbd">Esc</span> : Menutup jendela konfirmasi atau popup modal.</li>
+            </ul>
+          </div>
+          <p><strong>Nominal Cepat (Quick Cash)</strong>: Gunakan tombol nominal cepat seperti <span class="pos-kbd">Uang Pas</span>, <span class="pos-kbd">+10k</span>, <span class="pos-kbd">+20k</span>, <span class="pos-kbd">+50k</span>, <span class="pos-kbd">+100k</span> untuk menghitung kembalian uang pelanggan tanpa perlu mengetik angka manual.</p>
         </div>
       </article>
 
       <!-- BAB 6 -->
-      <article id="bab-6" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 6 konfirmasi pesanan validasi periksa kembali cegah salah ketik sebelum cetak simpan">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">6</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 6: Validasi dan Konfirmasi Pesanan Sebelum Cetak</h3>
+      <article id="bab-6" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 6 konfirmasi pesanan validasi periksa kembali cegah salah ketik sebelum cetak simpan atomik">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">6</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 6: Validasi & Konfirmasi Pesanan Sebelum Cetak</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>Untuk menghindari kesalahan pencatatan atau salah hitung kembalian, sistem akan meminta konfirmasi kasir terlebih dahulu:</p>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <p>Untuk mencegah kekeliruan kasir, sistem menyediakan dialog konfirmasi:</p>
           <ol class="list-decimal pl-4 space-y-1">
-            <li>Saat Anda menekan tombol <strong>Cetak Struk</strong> atau <strong>Simpan Gambar (WhatsApp)</strong>, transaksi belum langsung disimpan ke database.</li>
-            <li>Jendela <strong>Periksa Kembali Pesanan</strong> akan muncul merangkum semua item belanjaan, total akhir, uang diterima, dan kembalian.</li>
-            <li>Jika ada yang perlu disesuaikan, klik <strong>Periksa Lagi (Batal)</strong> untuk kembali mengedit keranjang belanja.</li>
-            <li>Jika pesanan sudah sesuai, klik tombol <strong>Ya, Cetak & Simpan</strong>. Transaksi akan otomatis dicatat ke riwayat dan struk langsung dicetak.</li>
-            <li>Tersedia juga opsi *Hanya Cetak (Tanpa Simpan)* jika Anda hanya ingin mencetak draf nota sementara.</li>
+            <li>Saat kasir menekan tombol <strong>Cetak Struk (F4)</strong>, modal konfirmasi akan muncul merangkum semua daftar belanjaan, total uang diterima, dan kembalian.</li>
+            <li>Jika uang diterima masih kurang, sistem akan memberikan peringatan dan melarang pencetakan nota sebelum pembayaran lunas.</li>
+            <li>Klik <strong>Ya, Cetak & Simpan</strong> untuk mencetak struk sekaligus memotong stok barang secara atomik dan aman di database SQLite.</li>
           </ol>
         </div>
       </article>
 
       <!-- BAB 7 -->
-      <article id="bab-7" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 7 cetak struk printer thermal bluetooth usb margin headers footers whatsapp gambar png">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">7</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 7: Panduan Cetak Struk dan Simpan Gambar untuk WhatsApp</h3>
+      <article id="bab-7" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 7 cetak struk printer thermal bluetooth usb margin headers footers whatsapp gambar png salin teks">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">7</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 7: Cetak Struk, Gambar PNG, dan Teks WhatsApp</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1 mb-2">
-            <span class="font-semibold text-slate-800 block">Pengaturan Printer Kasir (Agar Tidak Terpotong):</span>
-            <ul class="list-disc pl-4 space-y-0.5">
-              <li>Hubungkan kabel USB atau sambungkan Bluetooth printer ke komputer.</li>
-              <li>Saat kotak dialog cetak peramban muncul, pilih nama printer Anda pada bagian *Destination*.</li>
-              <li>Buka menu *More Settings*, lalu <strong>hilangkan centang (uncheck) pada Headers and Footers</strong> agar URL website dan tanggal browser tidak ikut tercetak.</li>
-              <li>Atur *Margins* ke <strong>None</strong> atau <strong>Default</strong>.</li>
-            </ul>
-          </div>
-          <p><strong>Kirim Struk via WhatsApp</strong>: Jika pembeli berbelanja online atau tidak memerlukan kertas fisik, tekan tombol <strong>Simpan Gambar (WhatsApp)</strong>. Berkas gambar struk (format PNG) berkualitas jernih akan terunduh ke folder Downloads laptop Anda dan siap dilampirkan ke chat pembeli.</p>
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
+          <ul class="list-disc pl-4 space-y-1.5">
+            <li><strong>Cetak Printer Thermal</strong>: Pastikan pada jendela dialog printer browser, opsi <em>Headers and Footers</em> dihilangkan centangnya (uncheck) dan margin diatur ke <em>None</em>.</li>
+            <li><strong>Toggle Ukuran Kertas Instan</strong>: Anda dapat menekan tombol <strong>58mm</strong> atau <strong>80mm</strong> langsung di panel pratinjau struk kasir tanpa harus masuk ke menu pengaturan.</li>
+            <li><strong>Salin Format Teks WhatsApp</strong>: Klik tombol <strong>Salin WA</strong> untuk menyalin format nota teks rapi yang langsung bisa di-paste (Ctrl + V) ke obrolan WhatsApp pelanggan.</li>
+            <li><strong>Simpan Gambar (PNG)</strong>: Klik tombol <strong>Simpan Gambar (PNG)</strong> untuk mengunduh gambar struk beresolusi tajam siap kirim.</li>
+          </ul>
         </div>
       </article>
 
       <!-- BAB 8 -->
-      <article id="bab-8" class="guide-item clean-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 8 riwayat penjualan cetak ulang nota lama cadangan data backup json flashdisk">
-        <div class="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-          <span class="w-6 h-6 rounded bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center">8</span>
-          <h3 class="font-bold text-sm sm:text-base">Bab 8: Riwayat Penjualan dan Pencadangan Data</h3>
+      <article id="bab-8" class="guide-item pos-card p-5 scroll-mt-24" data-aos="fade-up" data-search="bab 8 riwayat penjualan cetak ulang nota lama cadangan data backup json zip flashdisk">
+        <div class="flex items-center gap-2 mb-2 pb-2.5 border-b border-[var(--color-border-subtle)]">
+          <span class="w-6 h-6 rounded-lg bg-[var(--color-primary-subtle)] text-[var(--color-primary)] font-bold text-xs flex items-center justify-center">8</span>
+          <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)]">Bab 8: Riwayat Penjualan & Cadangan Data Toko</h3>
         </div>
-        <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
+        <div class="text-xs text-[var(--color-text-muted)] space-y-2 leading-relaxed">
           <ul class="list-disc pl-4 space-y-1.5">
-            <li><strong>Cetak Ulang Nota Lama</strong>: Buka tab <strong>Riwayat Penjualan</strong>. Cari nomor nota yang dimaksud, lalu klik ikon printer untuk mencetak ulang struk pelanggan kapan saja.</li>
-            <li><strong>Pencadangan Data Toko (Backup)</strong>:
-              <ol class="list-decimal pl-4 mt-1 space-y-0.5 text-slate-500">
-                <li>Buka tab <strong>Pengaturan</strong>.</li>
-                <li>Pada bagian bawah, klik tombol <strong>Download Salinan Data</strong>.</li>
-                <li>Berkas data cadangan berekstensi `.zip` (berisi database SQLite dan berkas pengaturan) akan terunduh. Salin berkas ini ke flashdisk secara berkala (misal seminggu sekali) agar data toko Anda selalu memiliki cadangan aman.</li>
-              </ol>
-            </li>
+            <li><strong>Cetak Ulang Nota</strong>: Masuk ke tab <strong>Riwayat Penjualan</strong> untuk melihat seluruh transaksi atau mencetak ulang struk lama. Jika suatu transaksi dihapus, sistem akan <strong>otomatis mengembalikan stok produk</strong> ke katalog!</li>
+            <li><strong>Cadangan Berkas ZIP</strong>: Pada tab <strong>Pengaturan</strong>, unduh berkas cadangan data `.zip` secara berkala (misal: seminggu sekali) untuk disimpan di flashdisk agar data toko Anda selalu aman.</li>
           </ul>
         </div>
       </article>

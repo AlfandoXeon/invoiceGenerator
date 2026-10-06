@@ -12,105 +12,133 @@
   <%- include('../partials/navigation') %>
 
   <!-- Konten Utama -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-5 sm:px-6 lg:px-8 flex flex-col gap-5">
 
     <!-- Header Judul & Tombol Tambah -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" data-aos="fade-down">
       <div>
-        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-500">inventory_2</span>
-          <span>Daftar Barang</span>
+        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">inventory_2</span>
+          <span>Katalog Produk & Harga</span>
         </h2>
-        <p class="text-xs text-slate-500 mt-0.5">
-          Daftar harga dan produk yang sering dijual di toko Anda.
+        <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+          Kelola master data barang, harga modal, harga jual, dan stok toko Anda.
         </p>
       </div>
 
-      <button type="button" onclick="ProductManager.openAddModal()" class="clean-btn-primary py-2 text-xs sm:text-sm">
-        <span class="material-symbols-outlined text-base">add</span>
-        <span>Tambah Barang</span>
+      <button type="button" onclick="ProductManager.openAddModal()" class="pos-btn pos-btn-primary text-xs sm:text-sm">
+        <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
+        <span>Tambah Barang Baru</span>
       </button>
     </div>
 
-    <!-- Kolom Pencarian -->
-    <div class="clean-card p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3" data-aos="fade-up">
-      <div class="relative w-full sm:w-72">
-        <input type="text" id="search-product-input" oninput="ProductManager.filterTable(this.value)" placeholder="Cari nama barang..." class="clean-input pl-8 text-xs">
-        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-base">search</span>
+    <!-- Kolom Pencarian & Filter Kategori -->
+    <div class="pos-card p-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3" data-aos="fade-up">
+      <!-- Search Input -->
+      <div class="relative w-full sm:w-80">
+        <input type="text" id="search-product-input" oninput="ProductManager.filterTable(this.value)" placeholder="Cari nama barang atau barcode..." class="pos-input pl-8 text-xs">
+        <span class="material-symbols-outlined absolute left-2.5 top-2.5 text-[var(--color-text-subtle)] text-base" aria-hidden="true">search</span>
       </div>
-      <div class="text-xs text-slate-500">
-        Total: <span class="font-bold text-slate-800"><%= products.length %></span> Barang
+
+      <!-- Category Filter Chips -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+        <button type="button" onclick="ProductManager.filterCategory('ALL')" class="category-chip px-2.5 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap bg-[var(--color-primary)] text-white" data-category="ALL">
+          Semua (<%= products.length %>)
+        </button>
+        <% (categories || []).forEach(function(cat) { %>
+          <button type="button" onclick="ProductManager.filterCategory('<%= cat %>')" class="category-chip px-2.5 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] border border-[var(--color-border)]" data-category="<%= cat %>">
+            <%= cat %>
+          </button>
+        <% }); %>
+      </div>
+
+      <div class="text-xs text-[var(--color-text-muted)] shrink-0 self-end md:self-center">
+        Tampil: <span id="visible-product-count" class="font-bold text-[var(--color-text-main)]"><%= products.length %></span> Barang
       </div>
     </div>
 
-    <!-- Tabel Barang -->
-    <div class="clean-card overflow-hidden" data-aos="fade-up" data-aos-delay="80">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+    <!-- Tabel Daftar Barang -->
+    <div class="pos-table-wrapper" data-aos="fade-up" data-aos-delay="60">
+      <table class="pos-table">
+        <thead>
+          <tr>
+            <th class="py-3 px-4">Barcode / Kode</th>
+            <th class="py-3 px-4">Nama Produk</th>
+            <th class="py-3 px-4">Kategori</th>
+            <th class="py-3 px-4 text-right">Harga Modal</th>
+            <th class="py-3 px-4 text-right">Harga Jual</th>
+            <th class="py-3 px-4 text-center">Status Stok</th>
+            <th class="py-3 px-4 text-center w-24">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="products-table-body" class="divide-y divide-[var(--color-border-subtle)]">
+          <% if (products.length === 0) { %>
             <tr>
-              <th class="py-2.5 px-4">Kode / Barcode</th>
-              <th class="py-2.5 px-4">Nama Barang</th>
-              <th class="py-2.5 px-4">Kategori</th>
-              <th class="py-2.5 px-4 text-right">Harga Beli</th>
-              <th class="py-2.5 px-4 text-right">Harga Jual</th>
-              <th class="py-2.5 px-4 text-center">Stok</th>
-              <th class="py-2.5 px-4 text-center w-24">Pilihan</th>
+              <td colspan="7" class="py-12 text-center text-[var(--color-text-subtle)]">
+                <span class="material-symbols-outlined text-4xl block mb-2 opacity-50" aria-hidden="true">inventory</span>
+                <p class="font-semibold text-xs">Belum ada barang terdaftar di katalog.</p>
+                <p class="text-[11px] opacity-75 mt-0.5">Klik tombol "Tambah Barang Baru" untuk mulai mencatat stok.</p>
+              </td>
             </tr>
-          </thead>
-          <tbody id="products-table-body" class="divide-y divide-slate-100">
-            <% if (products.length === 0) { %>
-              <tr>
-                <td colspan="7" class="py-10 text-center text-slate-400">
-                  <span class="material-symbols-outlined text-3xl block mb-1 text-slate-300">inventory</span>
-                  <p class="font-medium text-xs">Belum ada barang terdaftar.</p>
-                  <p class="text-[11px] text-slate-400 mt-0.5">Klik tombol "Tambah Barang" di atas untuk memasukkan data.</p>
+          <% } else { %>
+            <% products.forEach(function(item) { %>
+              <% 
+                const stock = parseInt(item.stock, 10) || 0;
+                let stockBadgeClass = 'pos-badge pos-badge-success';
+                let stockText = `${stock} ${item.unit || 'Pcs'}`;
+                if (stock <= 0) {
+                  stockBadgeClass = 'pos-badge pos-badge-danger';
+                  stockText = `Habis (0 ${item.unit || 'Pcs'})`;
+                } else if (stock <= 5) {
+                  stockBadgeClass = 'pos-badge pos-badge-warning';
+                  stockText = `Menipis: ${stock} ${item.unit || 'Pcs'}`;
+                }
+              %>
+              <tr class="product-table-row transition" data-search="<%= (item.name + ' ' + (item.barcode || '') + ' ' + (item.category || '')).toLowerCase() %>" data-row-category="<%= item.category || 'Umum' %>">
+                <td class="py-3 px-4 font-mono text-[var(--color-text-muted)] text-xs"><%= item.barcode || '-' %></td>
+                <td class="py-3 px-4 font-semibold text-xs sm:text-sm text-[var(--color-text-main)]"><%= item.name %></td>
+                <td class="py-3 px-4">
+                  <span class="pos-badge pos-badge-neutral">
+                    <%= item.category || 'Umum' %>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-right text-[var(--color-text-muted)] font-mono text-xs"><%= formatRupiah(item.costPrice) %></td>
+                <td class="py-3 px-4 text-right font-bold font-mono text-xs text-[var(--color-text-main)]"><%= formatRupiah(item.sellingPrice) %></td>
+                <td class="py-3 px-4 text-center">
+                  <span class="<%= stockBadgeClass %>">
+                    <%= stockText %>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <div class="inline-flex items-center gap-1">
+                    <button type="button" onclick="ProductManager.openEditModal('<%= item.id %>', '<%= item.barcode %>', '<%= item.name %>', '<%= item.category %>', <%= item.costPrice %>, <%= item.sellingPrice %>, '<%= item.unit %>', <%= item.stock %>)" class="p-1 rounded text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-subtle)] transition" title="Ubah Data">
+                      <span class="material-symbols-outlined text-base" aria-hidden="true">edit</span>
+                    </button>
+                    <button type="button" onclick="ProductManager.deleteProduct('<%= item.id %>', '<%= item.name %>')" class="p-1 rounded text-[var(--color-text-subtle)] hover:text-[var(--color-destructive)] hover:bg-[var(--color-destructive-subtle)] transition" title="Hapus Produk">
+                      <span class="material-symbols-outlined text-base" aria-hidden="true">delete</span>
+                    </button>
+                  </div>
                 </td>
               </tr>
-            <% } else { %>
-              <% products.forEach(function(item) { %>
-                <tr class="product-table-row transition" data-search="<%= (item.name + ' ' + (item.barcode || '') + ' ' + (item.category || '')).toLowerCase() %>">
-                  <td class="py-3 px-4 font-mono text-slate-500"><%= item.barcode || '-' %></td>
-                  <td class="py-3 px-4 font-semibold text-xs sm:text-sm"><%= item.name %></td>
-                  <td class="py-3 px-4">
-                    <span class="px-2 py-0.5 rounded text-[11px] bg-slate-100 text-slate-600 border border-slate-200">
-                      <%= item.category || 'Umum' %>
-                    </span>
-                  </td>
-                  <td class="py-3 px-4 text-right text-slate-500 font-mono"><%= formatRupiah(item.costPrice) %></td>
-                  <td class="py-3 px-4 text-right font-bold font-mono"><%= formatRupiah(item.sellingPrice) %></td>
-                  <td class="py-3 px-4 text-center text-slate-700">
-                    <%= item.stock %> <%= item.unit || 'Pcs' %>
-                  </td>
-                  <td class="py-3 px-4 text-center">
-                    <div class="inline-flex items-center gap-1">
-                      <button type="button" onclick="ProductManager.openEditModal('<%= item.id %>', '<%= item.barcode %>', '<%= item.name %>', '<%= item.category %>', <%= item.costPrice %>, <%= item.sellingPrice %>, '<%= item.unit %>', <%= item.stock %>)" class="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition" title="Ubah Data">
-                        <span class="material-symbols-outlined text-base">edit</span>
-                      </button>
-                      <button type="button" onclick="ProductManager.deleteProduct('<%= item.id %>', '<%= item.name %>')" class="p-1 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus">
-                        <span class="material-symbols-outlined text-base">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              <% }); %>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
+            <% }); %>
+          <% } %>
+        </tbody>
+      </table>
     </div>
 
   </main>
 
   <!-- MODAL TAMBAH / EDIT BARANG -->
-  <div id="product-modal" class="fixed inset-0 z-50 bg-black/40 hidden items-center justify-center p-4">
-    <div class="clean-card w-full max-w-lg p-6 relative shadow-xl" data-aos="zoom-in" data-aos-duration="250">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-        <h3 id="modal-title" class="font-bold text-sm sm:text-base flex items-center gap-2">
+  <div id="product-modal" class="pos-modal-backdrop hidden items-center justify-center p-4">
+    <div class="pos-modal-card p-5 sm:p-6 relative">
+      
+      <div class="flex justify-between items-center mb-4 pb-2.5 border-b border-[var(--color-border-subtle)]">
+        <h3 id="modal-title" class="font-bold text-sm sm:text-base flex items-center gap-2 text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">inventory</span>
           <span>Tambah Barang Baru</span>
         </h3>
-        <button type="button" onclick="ProductManager.closeModal()" class="text-slate-400 hover:text-slate-600">
-          <span class="material-symbols-outlined">close</span>
+        <button type="button" onclick="ProductManager.closeModal()" class="p-1 rounded text-[var(--color-text-subtle)] hover:text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
       </div>
 
@@ -119,44 +147,54 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="sm:col-span-2">
-            <label class="clean-label">Nama Barang *</label>
-            <input type="text" id="prod-name" required placeholder="Contoh: Beras Rojolele 5kg" class="clean-input font-medium">
+            <label class="pos-label">Nama Barang / Produk *</label>
+            <input type="text" id="prod-name" required placeholder="Contoh: Beras Rojolele 5kg" class="pos-input font-medium">
           </div>
+
           <div>
-            <label class="clean-label">Kode / Barcode (Opsional)</label>
-            <input type="text" id="prod-barcode" placeholder="Scan barcode disini" class="clean-input font-mono">
+            <label class="pos-label">Kode / Barcode (Opsional)</label>
+            <input type="text" id="prod-barcode" placeholder="Scan barcode disini" class="pos-input font-mono">
           </div>
+
           <div>
-            <label class="clean-label">Kategori</label>
-            <input type="text" id="prod-category" placeholder="Sembako / Minuman / Makanan" class="clean-input">
+            <label class="pos-label">Kategori</label>
+            <input type="text" id="prod-category" placeholder="Sembako / Makanan / Minuman" class="pos-input">
           </div>
+
           <div>
-            <label class="clean-label">Harga Beli / Modal (Rp)</label>
-            <input type="number" id="prod-cost-price" min="0" placeholder="0" class="clean-input font-mono">
+            <label class="pos-label">Harga Modal / Beli (Rp)</label>
+            <input type="number" id="prod-cost-price" min="0" placeholder="0" class="pos-input font-mono">
           </div>
+
           <div>
-            <label class="clean-label">Harga Jual (Rp) *</label>
-            <input type="number" id="prod-selling-price" min="0" required placeholder="0" class="clean-input font-mono font-bold">
+            <label class="pos-label">
+              <span>Harga Jual (Rp) *</span>
+              <span id="margin-preview-badge" class="hidden"></span>
+            </label>
+            <input type="number" id="prod-selling-price" min="0" required placeholder="0" class="pos-input font-mono font-bold">
           </div>
+
           <div>
-            <label class="clean-label">Jumlah Stok</label>
-            <input type="number" id="prod-stock" min="0" value="10" class="clean-input font-mono">
+            <label class="pos-label">Jumlah Stok Awal</label>
+            <input type="number" id="prod-stock" min="0" value="10" class="pos-input font-mono">
           </div>
+
           <div>
-            <label class="clean-label">Satuan</label>
-            <input type="text" id="prod-unit" value="Pcs" placeholder="Pcs / Bungkus / Sak" class="clean-input">
+            <label class="pos-label">Satuan</label>
+            <input type="text" id="prod-unit" value="Pcs" placeholder="Pcs / Bungkus / Kg" class="pos-input">
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
-          <button type="button" onclick="ProductManager.closeModal()" class="clean-btn-secondary text-xs">
-            Batal
+        <div class="pt-3 border-t border-[var(--color-border-subtle)] flex justify-end gap-2">
+          <button type="button" onclick="ProductManager.closeModal()" class="pos-btn pos-btn-secondary text-xs">
+            Batal (Esc)
           </button>
-          <button type="submit" class="clean-btn-primary text-xs">
-            <span>Simpan Barang</span>
+          <button type="submit" class="pos-btn pos-btn-primary text-xs">
+            <span>Simpan Data Barang</span>
           </button>
         </div>
       </form>
+
     </div>
   </div>
 

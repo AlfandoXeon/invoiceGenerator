@@ -1,30 +1,37 @@
 <!-- Toast Container -->
-<div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+<div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
 
 <script>
-  function showToast(message, type = 'info', duration = 2500) {
+  function showToast(message, type = 'info', duration = 2800) {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
     const toast = document.createElement('div');
-    toast.className = `pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-lg shadow-md text-xs font-semibold transition-all duration-200 transform translate-y-3 opacity-0 bg-white border border-slate-200 text-slate-800`;
+    toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg text-xs font-semibold transition-all duration-200 transform translate-y-3 opacity-0 border`;
+    toast.style.backgroundColor = 'var(--color-bg-card)';
+    toast.style.color = 'var(--color-text-main)';
+    toast.style.borderColor = 'var(--color-border)';
 
     let iconName = 'info';
-    let iconColor = 'text-slate-600';
+    let iconColor = 'var(--color-text-muted)';
+    
     if (type === 'success') {
       iconName = 'check_circle';
-      iconColor = 'text-emerald-600';
+      iconColor = 'var(--color-success)';
+      toast.style.borderColor = 'rgba(5, 150, 105, 0.3)';
     } else if (type === 'warning') {
       iconName = 'warning';
-      iconColor = 'text-amber-600';
+      iconColor = 'var(--color-warning)';
+      toast.style.borderColor = 'rgba(217, 119, 6, 0.3)';
     } else if (type === 'error') {
       iconName = 'error';
-      iconColor = 'text-red-600';
+      iconColor = 'var(--color-destructive)';
+      toast.style.borderColor = 'rgba(220, 38, 38, 0.3)';
     }
 
     toast.innerHTML = `
-      <span class="material-symbols-outlined text-base ${iconColor}">${iconName}</span>
-      <span>${message}</span>
+      <span class="material-symbols-outlined text-lg shrink-0" style="color: ${iconColor}" aria-hidden="true">${iconName}</span>
+      <span class="leading-tight">${message}</span>
     `;
 
     container.appendChild(toast);

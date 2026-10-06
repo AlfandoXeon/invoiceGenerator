@@ -135,6 +135,47 @@ class Database {
   }
 
   /**
+   * Membuka transaksi database SQLite
+   */
+  async beginTransaction() {
+    return await this.run('BEGIN TRANSACTION;');
+  }
+
+  /**
+   * Commit transaksi database SQLite
+   */
+  async commit() {
+    return await this.run('COMMIT;');
+  }
+
+  /**
+   * Rollback transaksi database SQLite
+   */
+  async rollback() {
+    return await this.run('ROLLBACK;');
+  }
+
+  /**
+   * Eksekusi blok fungsi dalam satu transaksi database atomik
+   * @param {Function} callback - async (db) => {}
+   */
+  async withTransaction(callback) {
+    await this.beginTransaction();
+    try {
+      const result = await callback(this);
+      await this.commit();
+      return result;
+    } catch (error) {
+      try {
+        await this.rollback();
+      } catch (rollbackErr) {
+        console.error('[Database] Rollback error:', rollbackErr.message);
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Menutup koneksi database SQLite yang sedang aktif
    */
   async close() {

@@ -2,6 +2,7 @@ const BaseController = require('./BaseController');
 const StoreConfig = require('../models/StoreConfig');
 const Product = require('../models/Product');
 const Transaction = require('../models/Transaction');
+const Database = require('../models/Database');
 
 /**
  * CashierController - Mengelola tampilan Kasir, kalkulasi kasir & checkout
@@ -80,23 +81,24 @@ class CashierController extends BaseController {
         return this.sendError(res, stockValidation.errors.join('; '), 400);
       }
 
-      // 2. Kurangi stok produk di katalog
-      const updatedProducts = await Product.deductStock(items);
-
-      // 3. Catat transaksi ke riwayat
-      const transaction = await Transaction.create({
-        invoiceNumber,
-        cashier,
-        items,
-        subtotal,
-        discount,
-        taxPercent,
-        taxAmount,
-        grandTotal,
-        paymentMethod,
-        cashReceived,
-        change,
-        note
+      // 2 & 3. Eksekusi atomik: kurangi stok dan catat transaksi
+      const { transaction, updatedProducts } = await Database.withTransaction(async () => {
+        const reduced = await Product.deductStock(items);
+        const trx = await Transaction.create({
+          invoiceNumber,
+          cashier,
+          items,
+          subtotal,
+          discount,
+          taxPercent,
+          taxAmount,
+          grandTotal,
+          paymentMethod,
+          cashReceived,
+          change,
+          note
+        });
+        return { transaction: trx, updatedProducts: reduced };
       });
 
       // 4. Ambil seluruh data produk terbaru untuk sinkronisasi antarmuka kasir

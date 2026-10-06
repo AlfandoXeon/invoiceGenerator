@@ -3,7 +3,7 @@
 <head>
   <%- include('../partials/head') %>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+<body class="min-h-screen flex flex-col">
 
   <!-- Header -->
   <%- include('../partials/navbar') %>
@@ -12,155 +12,155 @@
   <%- include('../partials/navigation') %>
 
   <!-- Konten Utama -->
-  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-5 sm:px-6 lg:px-8 flex flex-col gap-5">
 
     <!-- Judul Halaman -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" data-aos="fade-down">
       <div>
-        <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-700">settings</span>
+        <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">settings</span>
           <span>Pengaturan Sistem & Kasir</span>
         </h2>
-        <p class="text-xs text-slate-500 mt-0.5">
-          Atur daftar petugas kasir, tema tampilan aplikasi, dan informasi server lokal Anda.
+        <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+          Atur daftar petugas kasir, preferensi tema aplikasi, dan cadangan data lokal Anda.
         </p>
       </div>
 
       <% if (typeof successMessage !== 'undefined' && successMessage) { %>
-        <div class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-base">check_circle</span>
+        <div class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border" style="background-color: var(--color-success-subtle); color: var(--color-success); border-color: rgba(5, 150, 105, 0.3)">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">check_circle</span>
           <span><%= successMessage %></span>
         </div>
       <% } %>
     </div>
 
     <!-- FORM PENGATURAN -->
-    <form action="/settings" method="POST" class="flex flex-col gap-6">
+    <form action="/settings" method="POST" class="flex flex-col gap-5">
 
       <!-- BAGIAN 1: PENGATURAN KASIR TOKO -->
-      <div class="clean-card p-5" data-aos="fade-up">
-        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2 mb-3">
-          <span class="material-symbols-outlined text-slate-600 text-lg">badge</span>
-          <span>Daftar & Petugas Kasir</span>
+      <div class="pos-card p-5" data-aos="fade-up">
+        <h3 class="font-bold text-sm text-[var(--color-text-main)] flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">badge</span>
+          <span>Petugas Kasir Toko</span>
         </h3>
-        <p class="text-xs text-slate-500 mb-4">
+        <p class="text-xs text-[var(--color-text-muted)] mb-4">
           Kelola siapa saja nama kasir yang bertugas di toko. Kasir dapat dipilih saat melayani transaksi di menu kasir.
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="clean-label">Kasir Utama yang Sedang Bertugas</label>
-            <select name="defaultCashier" id="setting-default-cashier" class="clean-input font-medium">
+            <label class="pos-label">Kasir Utama yang Sedang Bertugas</label>
+            <select name="defaultCashier" id="setting-default-cashier" class="pos-select font-medium">
               <% (config.pos.cashiers || ['HOKI']).forEach(function(c) { %>
                 <option value="<%= c %>" <%= (config.pos.defaultCashier === c) ? 'selected' : '' %>><%= c %></option>
               <% }); %>
             </select>
-            <span class="text-[11px] text-slate-400 mt-1 block">Kasir ini akan otomatis terpilih pada nota baru.</span>
+            <span class="text-[11px] text-[var(--color-text-subtle)] mt-1.5 block">Kasir ini otomatis terpilih pada nota kasir baru.</span>
           </div>
 
           <div>
-            <label class="clean-label">Daftar Semua Kasir Toko (1 nama per baris)</label>
-            <textarea name="cashiersList" rows="3" class="clean-input text-xs font-mono resize-none" placeholder="HOKI&#10;Kasir 1&#10;Owner"><%= (config.pos.cashiers || []).join('\n') %></textarea>
-            <span class="text-[11px] text-slate-400 mt-1 block">Tulis nama-nama kasir toko Anda di sini.</span>
+            <label class="pos-label">Daftar Semua Kasir Toko (1 nama per baris)</label>
+            <textarea name="cashiersList" rows="3" class="pos-textarea text-xs font-mono resize-none" placeholder="HOKI&#10;Kasir 1&#10;Owner"><%= (config.pos.cashiers || []).join('\n') %></textarea>
+            <span class="text-[11px] text-[var(--color-text-subtle)] mt-1.5 block">Pisahkan setiap nama kasir dengan baris baru (Enter).</span>
           </div>
         </div>
       </div>
 
-      <!-- BAGIAN 2: PILIHAN TEMA TAMPILAN -->
-      <div class="clean-card p-5" data-aos="fade-up" data-aos-delay="50">
-        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2 mb-2">
-          <span class="material-symbols-outlined text-slate-600 text-lg">palette</span>
-          <span>Pilihan Tema Tampilan</span>
+      <!-- BAGIAN 2: PILIHAN TEMA TAMPILAN SISTEM -->
+      <div class="pos-card p-5" data-aos="fade-up" data-aos-delay="50">
+        <h3 class="font-bold text-sm text-[var(--color-text-main)] flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">palette</span>
+          <span>Pilihan Tema Tampilan Antarmuka</span>
         </h3>
-        <p class="text-xs text-slate-500 mb-4">
-          Pilih warna tema yang paling nyaman di mata kasir saat digunakan sehari-hari.
+        <p class="text-xs text-[var(--color-text-muted)] mb-4">
+          Pilih tema warna yang paling nyaman di mata kasir. Klik salah satu kartu di bawah untuk melihat perubahannya seketika.
         </p>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           
-          <!-- Tema 1: Terang Klasik -->
-          <label class="flex flex-col p-3 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-slate-400 transition" onclick="previewTheme('light')">
+          <!-- Tema 1: Terang Bersih -->
+          <label class="flex flex-col p-3 rounded-xl border border-[var(--color-border)] bg-white cursor-pointer hover:border-[var(--color-primary)] transition" onclick="previewTheme('light')">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-slate-900">Terang Bersih</span>
-              <input type="radio" name="theme" value="light" <%= (config.pos.theme === 'light') ? 'checked' : '' %> class="text-red-600">
+              <input type="radio" name="theme" value="light" <%= (config.pos.theme === 'light') ? 'checked' : '' %> class="text-blue-600">
             </div>
-            <div class="h-10 rounded border border-slate-200 bg-slate-50 flex items-center justify-center p-1 gap-1">
+            <div class="h-10 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center p-1 gap-1">
               <div class="w-1/3 h-full bg-white rounded border border-slate-200"></div>
               <div class="w-2/3 h-full bg-slate-100 rounded"></div>
             </div>
-            <span class="text-[10px] text-slate-500 mt-2">Standar putih bersih</span>
+            <span class="text-[10px] text-slate-500 mt-2">Standar bersih, modern</span>
           </label>
 
-          <!-- Tema 2: Lembut / Warm Cream -->
-          <label class="flex flex-col p-3 rounded-lg border border-amber-200 bg-[#fbf9f4] cursor-pointer hover:border-amber-400 transition" onclick="previewTheme('warm')">
+          <!-- Tema 2: Krem Lembut / Warm -->
+          <label class="flex flex-col p-3 rounded-xl border border-amber-200 bg-[#fbf9f4] cursor-pointer hover:border-amber-400 transition" onclick="previewTheme('warm')">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-amber-950">Krem Lembut</span>
               <input type="radio" name="theme" value="warm" <%= (config.pos.theme === 'warm') ? 'checked' : '' %> class="text-amber-600">
             </div>
-            <div class="h-10 rounded border border-amber-200 bg-[#f4efe6] flex items-center justify-center p-1 gap-1">
+            <div class="h-10 rounded-lg border border-amber-200 bg-[#f4efe6] flex items-center justify-center p-1 gap-1">
               <div class="w-1/3 h-full bg-white rounded border border-amber-200"></div>
               <div class="w-2/3 h-full bg-[#eee9df] rounded"></div>
             </div>
-            <span class="text-[10px] text-amber-800 mt-2">Nyaman di mata lama</span>
+            <span class="text-[10px] text-amber-800 mt-2">Hangat & nyaman di mata</span>
           </label>
 
-          <!-- Tema 3: Abu-Abu Minimalis -->
-          <label class="flex flex-col p-3 rounded-lg border border-slate-300 bg-slate-100 cursor-pointer hover:border-slate-400 transition" onclick="previewTheme('slate')">
+          <!-- Tema 3: Abu-Abu Minimalis / Slate -->
+          <label class="flex flex-col p-3 rounded-xl border border-slate-300 bg-slate-100 cursor-pointer hover:border-slate-500 transition" onclick="previewTheme('slate')">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-slate-800">Abu Minimalis</span>
               <input type="radio" name="theme" value="slate" <%= (config.pos.theme === 'slate') ? 'checked' : '' %> class="text-slate-600">
             </div>
-            <div class="h-10 rounded border border-slate-300 bg-slate-200 flex items-center justify-center p-1 gap-1">
+            <div class="h-10 rounded-lg border border-slate-300 bg-slate-200 flex items-center justify-center p-1 gap-1">
               <div class="w-1/3 h-full bg-white rounded border border-slate-300"></div>
               <div class="w-2/3 h-full bg-slate-300 rounded"></div>
             </div>
-            <span class="text-[10px] text-slate-600 mt-2">Nuansa netral modern</span>
+            <span class="text-[10px] text-slate-600 mt-2">Nuansa netral industri</span>
           </label>
 
-          <!-- Tema 4: Gelap Lembut -->
-          <label class="flex flex-col p-3 rounded-lg border border-slate-700 bg-slate-900 text-white cursor-pointer hover:border-slate-500 transition" onclick="previewTheme('dark')">
+          <!-- Tema 4: Gelap Modern / Dark -->
+          <label class="flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900 text-white cursor-pointer hover:border-blue-500 transition" onclick="previewTheme('dark')">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-white">Gelap Halus</span>
-              <input type="radio" name="theme" value="dark" <%= (config.pos.theme === 'dark') ? 'checked' : '' %> class="text-slate-400">
+              <span class="text-xs font-bold text-white">Gelap Elegan</span>
+              <input type="radio" name="theme" value="dark" <%= (config.pos.theme === 'dark') ? 'checked' : '' %> class="text-blue-500">
             </div>
-            <div class="h-10 rounded border border-slate-700 bg-slate-800 flex items-center justify-center p-1 gap-1">
+            <div class="h-10 rounded-lg border border-slate-700 bg-slate-800 flex items-center justify-center p-1 gap-1">
               <div class="w-1/3 h-full bg-slate-700 rounded"></div>
               <div class="w-2/3 h-full bg-slate-800 rounded"></div>
             </div>
-            <span class="text-[10px] text-slate-400 mt-2">Tidak silau saat malam</span>
+            <span class="text-[10px] text-slate-400 mt-2">Bebas silau malam hari</span>
           </label>
 
         </div>
       </div>
 
       <!-- BAGIAN 3: PENGATURAN STRUK & OPERASIONAL -->
-      <div class="clean-card p-5" data-aos="fade-up" data-aos-delay="100">
-        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2 mb-3">
-          <span class="material-symbols-outlined text-slate-600 text-lg">tune</span>
-          <span>Pengaturan Tambahan Struk</span>
+      <div class="pos-card p-5" data-aos="fade-up" data-aos-delay="100">
+        <h3 class="font-bold text-sm text-[var(--color-text-main)] flex items-center gap-2 mb-3">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">tune</span>
+          <span>Fitur Operasional Kasir</span>
         </h3>
 
         <div class="space-y-3">
-          <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50/50 cursor-pointer">
-            <input type="checkbox" name="requireConfirmation" <%= config.pos.requireConfirmation ? 'checked' : '' %> class="w-4 h-4 rounded text-red-600 border-slate-300">
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] cursor-pointer">
+            <input type="checkbox" name="requireConfirmation" <%= config.pos.requireConfirmation ? 'checked' : '' %> class="w-4 h-4 rounded text-blue-600 border-[var(--color-border)]">
             <div>
-              <div class="text-xs font-semibold text-slate-800">Tampilkan konfirmasi pesanan sebelum mencetak</div>
-              <div class="text-[11px] text-slate-500">Membantu kasir memeriksa ulang item dan uang pembayaran sebelum tersimpan ke data.</div>
+              <div class="text-xs font-semibold text-[var(--color-text-main)]">Tampilkan modal konfirmasi sebelum mencetak struk</div>
+              <div class="text-[11px] text-[var(--color-text-muted)]">Membantu kasir memeriksa ulang item dan uang pembayaran pelanggan sebelum tersimpan.</div>
             </div>
           </label>
 
-          <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50/50 cursor-pointer">
-            <input type="checkbox" name="showBarcodeOnReceipt" <%= config.pos.showBarcodeOnReceipt ? 'checked' : '' %> class="w-4 h-4 rounded text-red-600 border-slate-300">
+          <label class="flex items-center gap-3 p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] cursor-pointer">
+            <input type="checkbox" name="showBarcodeOnReceipt" <%= config.pos.showBarcodeOnReceipt ? 'checked' : '' %> class="w-4 h-4 rounded text-blue-600 border-[var(--color-border)]">
             <div>
-              <div class="text-xs font-semibold text-slate-800">Cetak Barcode / QR di bagian bawah struk</div>
-              <div class="text-[11px] text-slate-500">Menampilkan kode transaksi di bawah ucapan terima kasih nota.</div>
+              <div class="text-xs font-semibold text-[var(--color-text-main)]">Cetak nomor nota & barcode di bagian bawah struk</div>
+              <div class="text-[11px] text-[var(--color-text-muted)]">Mempermudah pelacakan nota struk belanja fisik oleh kasir.</div>
             </div>
           </label>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
-          <button type="submit" class="clean-btn-primary px-6 py-2 text-xs sm:text-sm">
-            <span class="material-symbols-outlined text-base">save</span>
+        <div class="mt-4 pt-3 border-t border-[var(--color-border-subtle)] flex justify-end">
+          <button type="submit" class="pos-btn pos-btn-primary px-6 py-2.5 text-xs sm:text-sm">
+            <span class="material-symbols-outlined text-base" aria-hidden="true">save</span>
             <span>Simpan Semua Pengaturan</span>
           </button>
         </div>
@@ -169,86 +169,86 @@
     </form>
 
     <!-- BAGIAN 4: INFORMASI SISTEM & SERVER LOKAL -->
-    <div class="clean-card p-5" data-aos="fade-up" data-aos-delay="150">
-      <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2 mb-2">
-        <span class="material-symbols-outlined text-slate-600 text-lg">dns</span>
-        <span>Informasi Sistem & Server Lokal</span>
+    <div class="pos-card p-5" data-aos="fade-up" data-aos-delay="150">
+      <h3 class="font-bold text-sm text-[var(--color-text-main)] flex items-center gap-2 mb-2">
+        <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">dns</span>
+        <span>Informasi Sistem & Server Mandiri</span>
       </h3>
-      <p class="text-xs text-slate-500 mb-4">
-        Aplikasi ini berjalan mandiri di komputer Anda tanpa memerlukan hosting berbayar:
+      <p class="text-xs text-[var(--color-text-muted)] mb-4">
+        Aplikasi berjalan secara lokal dan offline di komputer kasir:
       </p>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-          <span class="text-[10px] text-slate-500 block uppercase font-bold">Node.js</span>
-          <span class="font-mono font-bold text-slate-900 text-sm"><%= (typeof systemInfo !== 'undefined' && systemInfo.nodeVersion) ? systemInfo.nodeVersion : 'v26+' %></span>
+        <div class="bg-[var(--color-bg-subtle)] p-3 rounded-xl border border-[var(--color-border)]">
+          <span class="text-[10px] text-[var(--color-text-muted)] block uppercase font-bold">Node.js</span>
+          <span class="font-mono font-bold text-[var(--color-text-main)] text-sm"><%= (typeof systemInfo !== 'undefined' && systemInfo.nodeVersion) ? systemInfo.nodeVersion : 'v26+' %></span>
         </div>
 
-        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-          <span class="text-[10px] text-slate-500 block uppercase font-bold">Sistem Operasi</span>
-          <span class="font-medium text-slate-900"><%= (typeof systemInfo !== 'undefined' && systemInfo.platform) ? systemInfo.platform : 'Windows' %></span>
+        <div class="bg-[var(--color-bg-subtle)] p-3 rounded-xl border border-[var(--color-border)]">
+          <span class="text-[10px] text-[var(--color-text-muted)] block uppercase font-bold">Sistem Operasi</span>
+          <span class="font-medium text-[var(--color-text-main)]"><%= (typeof systemInfo !== 'undefined' && systemInfo.platform) ? systemInfo.platform : 'Windows' %></span>
         </div>
 
-        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-          <span class="text-[10px] text-slate-500 block uppercase font-bold">Port Aplikasi</span>
-          <span class="font-mono font-bold text-slate-900 text-sm"><%= (typeof systemInfo !== 'undefined' && systemInfo.port) ? systemInfo.port : 3000 %></span>
+        <div class="bg-[var(--color-bg-subtle)] p-3 rounded-xl border border-[var(--color-border)]">
+          <span class="text-[10px] text-[var(--color-text-muted)] block uppercase font-bold">Port Server</span>
+          <span class="font-mono font-bold text-[var(--color-text-main)] text-sm"><%= (typeof systemInfo !== 'undefined' && systemInfo.port) ? systemInfo.port : 3000 %></span>
         </div>
 
-        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-          <span class="text-[10px] text-slate-500 block uppercase font-bold">Lama Aktif</span>
-          <span class="font-medium text-slate-900"><%= (typeof systemInfo !== 'undefined' && systemInfo.uptime) ? systemInfo.uptime : '1 menit' %></span>
+        <div class="bg-[var(--color-bg-subtle)] p-3 rounded-xl border border-[var(--color-border)]">
+          <span class="text-[10px] text-[var(--color-text-muted)] block uppercase font-bold">Waktu Aktif</span>
+          <span class="font-medium text-[var(--color-text-main)]"><%= (typeof systemInfo !== 'undefined' && systemInfo.uptime) ? systemInfo.uptime : '1 menit' %></span>
         </div>
       </div>
     </div>
 
-    <!-- BAGIAN 5: CADANGAN & PEMULIHAN BERKAS DATA -->
-    <div class="clean-card p-5 space-y-5" data-aos="fade-up" data-aos-delay="200">
+    <!-- BAGIAN 5: CADANGAN & PEMULIHAN BERKAS DATA (ZIP) -->
+    <div class="pos-card p-5 space-y-4" data-aos="fade-up" data-aos-delay="200">
       <div>
-        <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-600 text-lg">backup</span>
-          <span>Cadangan & Pemulihan Data Toko (ZIP)</span>
+        <h3 class="font-bold text-sm text-[var(--color-text-main)] flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">backup</span>
+          <span>Cadangan & Pemulihan Data Offline (ZIP)</span>
         </h3>
-        <p class="text-xs text-slate-500 mt-0.5">
-          Kelola salinan data toko offline Anda dalam format berkas ZIP (berisi basis data SQLite dan pengaturan toko).
+        <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
+          Kelola salinan data toko offline Anda dalam format berkas ZIP (berisi basis data SQLite dan konfigurasi toko).
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[var(--color-border-subtle)]">
         
         <!-- Kolom Ekspor / Unduh -->
-        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between gap-3">
+        <div class="bg-[var(--color-bg-subtle)] p-4 rounded-xl border border-[var(--color-border)] flex flex-col justify-between gap-3">
           <div>
-            <h4 class="font-semibold text-xs text-slate-800 flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-slate-500 text-base">download</span>
+            <h4 class="font-semibold text-xs text-[var(--color-text-main)] flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[var(--color-text-muted)] text-base" aria-hidden="true">download</span>
               <span>Ekspor Salinan Cadangan</span>
             </h4>
-            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
-              Unduh berkas ZIP yang memuat seluruh katalog produk, riwayat penjualan, dan pengaturan toko untuk disimpan di flashdisk.
+            <p class="text-[11px] text-[var(--color-text-muted)] mt-1 leading-relaxed">
+              Unduh berkas ZIP yang memuat seluruh katalog produk, riwayat penjualan, dan profil toko untuk diamankan di flashdisk.
             </p>
           </div>
 
-          <a href="/settings/backup" class="clean-btn-secondary text-xs py-2 px-3 text-center flex items-center justify-center gap-1.5">
-            <span class="material-symbols-outlined text-sm">file_download</span>
-            <span>Download Salinan Data (.ZIP)</span>
+          <a href="/settings/backup" class="pos-btn pos-btn-secondary text-xs py-2 px-3 text-center flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-sm" aria-hidden="true">file_download</span>
+            <span>Download Cadangan Data (.ZIP)</span>
           </a>
         </div>
 
         <!-- Kolom Impor / Pulihkan -->
-        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between gap-3">
+        <div class="bg-[var(--color-bg-subtle)] p-4 rounded-xl border border-[var(--color-border)] flex flex-col justify-between gap-3">
           <div>
-            <h4 class="font-semibold text-xs text-slate-800 flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-slate-500 text-base">upload</span>
+            <h4 class="font-semibold text-xs text-[var(--color-text-main)] flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[var(--color-text-muted)] text-base" aria-hidden="true">upload</span>
               <span>Impor / Pulihkan Data dari ZIP</span>
             </h4>
-            <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
-              Pulihkan konfigurasi toko serta basis data SQLite dari berkas ZIP yang pernah diekspor sebelumnya.
+            <p class="text-[11px] text-[var(--color-text-muted)] mt-1 leading-relaxed">
+              Pulihkan basis data SQLite dan pengaturan toko dari berkas ZIP yang pernah dicadangkan sebelumnya.
             </p>
           </div>
 
           <div>
             <input type="file" id="input-backup-zip" accept=".zip" class="hidden" onchange="handleRestoreZipFile(event)">
-            <button type="button" onclick="document.getElementById('input-backup-zip').click()" id="btn-trigger-restore" class="clean-btn-primary w-full text-xs py-2 px-3 flex items-center justify-center gap-1.5">
-              <span class="material-symbols-outlined text-sm">upload_file</span>
+            <button type="button" onclick="document.getElementById('input-backup-zip').click()" id="btn-trigger-restore" class="pos-btn pos-btn-primary w-full text-xs py-2 px-3 flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-sm" aria-hidden="true">upload_file</span>
               <span>Pilih & Pulihkan dari ZIP</span>
             </button>
           </div>
@@ -267,7 +267,6 @@
 
   <script>
     function previewTheme(themeName) {
-      // Centang radio input yang bersesuaian
       const radio = document.querySelector(`input[name="theme"][value="${themeName}"]`);
       if (radio) radio.checked = true;
 
@@ -279,7 +278,7 @@
         localStorage.setItem('xeon_theme', themeName);
       }
 
-      const names = { light: 'Terang Bersih', warm: 'Krem Lembut', slate: 'Abu Minimalis', dark: 'Gelap Halus' };
+      const names = { light: 'Terang Bersih', warm: 'Krem Lembut', slate: 'Abu Minimalis', dark: 'Gelap Elegan' };
       if (typeof showToast === 'function') {
         showToast(`Tema ${names[themeName] || themeName} aktif`, 'info', 1500);
       }

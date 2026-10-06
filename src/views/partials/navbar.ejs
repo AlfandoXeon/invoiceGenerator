@@ -1,37 +1,65 @@
-<header id="app-navbar" class="bg-white border-b border-slate-200 text-slate-800 sticky top-0 z-40">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+<header id="app-navbar" class="sticky top-0 z-40 transition-colors duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex justify-between items-center gap-4">
     
-    <!-- Info Toko Sederhana -->
+    <!-- Info Toko & Brand Identity -->
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold">
-        <span class="material-symbols-outlined text-xl">store</span>
-      </div>
+      <% if (typeof config !== 'undefined' && config.store && config.store.logoUrl) { %>
+        <img src="<%= config.store.logoUrl %>" alt="Logo Toko" class="w-9 h-9 rounded-lg object-contain border border-[var(--color-border)] bg-[var(--color-bg-card)] p-0.5">
+      <% } else { %>
+        <div class="w-9 h-9 rounded-lg bg-[var(--color-primary)] text-white flex items-center justify-center font-bold shadow-xs">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">storefront</span>
+        </div>
+      <% } %>
+
       <div>
-        <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
-          <%= (typeof config !== 'undefined' && config.store && config.store.name) ? config.store.name : 'Toko Anda' %>
-        </h1>
-        <p class="text-xs text-slate-500">
-          <%= (typeof config !== 'undefined' && config.store && config.store.tagline) ? config.store.tagline : 'Aplikasi Kasir & Struk Belanja' %>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm sm:text-base font-bold text-[var(--color-text-main)] leading-tight tracking-tight">
+            <%= (typeof config !== 'undefined' && config.store && config.store.name) ? config.store.name : 'Xeon Store' %>
+          </h1>
+        </div>
+        <p class="text-[11px] text-[var(--color-text-muted)] truncate max-w-xs sm:max-w-sm">
+          <%= (typeof config !== 'undefined' && config.store && config.store.tagline) ? config.store.tagline : 'Sistem Kasir & Struk Belanja UMKM' %>
         </p>
       </div>
     </div>
 
-    <!-- Tanggal & Jam Sederhana -->
-    <div class="flex items-center gap-2 text-xs text-slate-500">
-      <span class="material-symbols-outlined text-sm text-slate-400">schedule</span>
-      <span id="nav-live-clock" class="font-medium text-slate-600">--:--:--</span>
+    <!-- Right Controls: Jam & Cepat Ganti Tema -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Jam Real-time -->
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)] border border-[var(--color-border)]">
+        <span class="material-symbols-outlined text-sm text-[var(--color-text-subtle)]" aria-hidden="true">schedule</span>
+        <span id="nav-live-clock">--:--:--</span>
+      </div>
+
+      <!-- Quick Theme Switcher Pill -->
+      <div class="flex items-center gap-1 p-0.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)]" title="Ganti Tema">
+        <button type="button" onclick="window.applyAppTheme('light')" class="p-1 rounded-md text-xs transition hover:scale-105 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)]" title="Tema Terang (Light)">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">light_mode</span>
+        </button>
+        <button type="button" onclick="window.applyAppTheme('dark')" class="p-1 rounded-md text-xs transition hover:scale-105 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)]" title="Tema Gelap (Dark)">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">dark_mode</span>
+        </button>
+        <button type="button" onclick="window.applyAppTheme('slate')" class="p-1 rounded-md text-xs transition hover:scale-105 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)]" title="Tema Slate">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">contrast</span>
+        </button>
+        <button type="button" onclick="window.applyAppTheme('warm')" class="p-1 rounded-md text-xs transition hover:scale-105 text-[var(--color-text-muted)] hover:text-[var(--color-text-main)]" title="Tema Warm Krem">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">coffee</span>
+        </button>
+      </div>
     </div>
 
   </div>
 </header>
 
 <script>
-  function updateNavClock() {
-    const el = document.getElementById('nav-live-clock');
-    if (!el) return;
-    const now = new Date();
-    el.innerText = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('id-ID', { hour12: false });
-  }
-  setInterval(updateNavClock, 1000);
-  updateNavClock();
+  (function() {
+    function updateNavClock() {
+      const el = document.getElementById('nav-live-clock');
+      if (!el) return;
+      const now = new Date();
+      el.innerText = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) + ' ' + now.toLocaleTimeString('id-ID', { hour12: false });
+    }
+    setInterval(updateNavClock, 1000);
+    updateNavClock();
+  })();
 </script>

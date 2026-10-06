@@ -3,7 +3,7 @@
 <head>
   <%- include('../partials/head') %>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+<body class="min-h-screen flex flex-col">
 
   <!-- Header -->
   <%- include('../partials/navbar') %>
@@ -12,67 +12,94 @@
   <%- include('../partials/navigation') %>
 
   <!-- Konten Utama -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-6">
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-5 sm:px-6 lg:px-8 flex flex-col gap-5">
 
-    <!-- Ringkasan Singkat Hari Ini -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 no-print" data-aos="fade-down">
-      <div class="clean-card p-4">
-        <span class="text-xs font-semibold text-slate-500">Penjualan Hari Ini</span>
-        <p class="text-lg sm:text-xl font-bold text-slate-900 mt-1"><%= formatRupiah(stats.todaySales) %></p>
+    <!-- BARIS INFORMASI CEPAT & KEYBOARD SHORTCUTS -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 no-print" data-aos="fade-down">
+      
+      <!-- Metrik Hari Ini -->
+      <div class="grid grid-cols-3 gap-3 w-full md:w-auto flex-grow max-w-xl">
+        <div class="pos-card p-3">
+          <span class="text-[11px] font-semibold text-[var(--color-text-muted)] block">Penjualan Hari Ini</span>
+          <p class="text-base sm:text-lg font-bold text-[var(--color-text-main)] mt-0.5"><%= formatRupiah(stats.todaySales) %></p>
+        </div>
+
+        <div class="pos-card p-3">
+          <span class="text-[11px] font-semibold text-[var(--color-text-muted)] block">Transaksi Hari Ini</span>
+          <p class="text-base sm:text-lg font-bold text-[var(--color-text-main)] mt-0.5"><%= stats.todayCount %> Nota</p>
+        </div>
+
+        <div class="pos-card p-3">
+          <span class="text-[11px] font-semibold text-[var(--color-text-muted)] block">Katalog Produk</span>
+          <p id="stat-products-count" class="text-base sm:text-lg font-bold text-[var(--color-text-main)] mt-0.5"><%= products.length %> Produk</p>
+        </div>
       </div>
 
-      <div class="clean-card p-4">
-        <span class="text-xs font-semibold text-slate-500">Transaksi Hari Ini</span>
-        <p class="text-lg sm:text-xl font-bold text-slate-900 mt-1"><%= stats.todayCount %> Nota</p>
+      <!-- Shortcut Bar Panduan Kasir Cepat -->
+      <div class="hidden lg:flex items-center gap-2 p-2 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] text-[11px] text-[var(--color-text-muted)]">
+        <span class="font-semibold text-[var(--color-text-main)] flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">keyboard</span>
+          <span>Shortcut:</span>
+        </span>
+        <span class="flex items-center gap-1"><span class="pos-kbd">F2</span> Cari</span>
+        <span>&bull;</span>
+        <span class="flex items-center gap-1"><span class="pos-kbd">F4</span> Bayar</span>
+        <span>&bull;</span>
+        <span class="flex items-center gap-1"><span class="pos-kbd">F8</span> Diskon</span>
+        <span>&bull;</span>
+        <span class="flex items-center gap-1"><span class="pos-kbd">F9</span> Reset</span>
       </div>
 
-      <div class="clean-card p-4 col-span-2 sm:col-span-1">
-        <span class="text-xs font-semibold text-slate-500">Jumlah Barang Terdaftar</span>
-        <p id="stat-products-count" class="text-lg sm:text-xl font-bold text-slate-900 mt-1"><%= products.length %> Produk</p>
-      </div>
     </div>
 
     <!-- AREA KASIR UTAMA: 2 KOLOM -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
       
-      <!-- KOLOM KIRI: FORM & TABEL (7 KOLOM) -->
-      <section class="lg:col-span-7 flex flex-col gap-5 no-print" data-aos="fade-up">
+      <!-- KOLOM KIRI: FORM BELANJA & TABEL (7 KOLOM) -->
+      <section class="lg:col-span-7 flex flex-col gap-4 no-print" data-aos="fade-up">
         
-        <!-- BAGIAN 1: INPUT BARANG -->
-        <div class="clean-card p-5">
+        <!-- BAGIAN 1: INPUT BARANG CEPAT -->
+        <div class="pos-card p-4 sm:p-5">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <span class="material-symbols-outlined text-red-600 text-lg">add_shopping_cart</span>
-              <span>Tambah Barang</span>
+            <h2 class="text-sm font-bold text-[var(--color-text-main)] flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">add_shopping_cart</span>
+              <span>Input Barang Kasir</span>
             </h2>
-            <span class="text-xs text-slate-400">Pilih dari daftar atau ketik baru</span>
+            <div class="flex items-center gap-1 text-[11px] text-[var(--color-text-subtle)]">
+              <span>Tekan</span> <span class="pos-kbd">F2</span> <span>untuk fokus cepat</span>
+            </div>
           </div>
 
           <form id="add-item-form" onsubmit="handleFormAddItem(event)" class="grid grid-cols-12 gap-3">
             <div class="col-span-12 sm:col-span-6">
-              <label class="clean-label">Nama Barang</label>
-              <input type="text" id="quick-item-name" placeholder="Pilih atau ketik barang..." list="products-datalist" autocomplete="off" required class="clean-input">
+              <label class="pos-label">
+                <span>Nama / Kode Barang</span>
+                <span class="text-[10px] text-[var(--color-text-subtle)]">Scan / Pilih</span>
+              </label>
+              <div class="relative">
+                <input type="text" id="quick-item-name" placeholder="Ketik nama atau scan barcode..." list="products-datalist" autocomplete="off" required class="pos-input">
+              </div>
               <div id="quick-stock-info" class="hidden text-[11px] font-medium mt-1"></div>
               <datalist id="products-datalist">
                 <% products.forEach(function(p) { %>
                   <option value="<%= p.name %>" data-price="<%= p.sellingPrice %>" data-stock="<%= p.stock %>">
-                    <%= formatRupiah(p.sellingPrice) %> - Stok: <%= p.stock %>
+                    <%= formatRupiah(p.sellingPrice) %> - Stok: <%= p.stock %> <%= p.unit || 'Pcs' %>
                   </option>
                 <% }); %>
               </datalist>
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-              <label class="clean-label">Harga Satuan (Rp)</label>
-              <input type="number" id="quick-item-price" min="0" placeholder="0" required class="clean-input font-medium">
+              <label class="pos-label">Harga Satuan (Rp)</label>
+              <input type="number" id="quick-item-price" min="0" placeholder="0" required class="pos-input font-mono font-medium">
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-              <label class="clean-label">Jumlah</label>
+              <label class="pos-label">Jumlah</label>
               <div class="flex gap-2">
-                <input type="number" id="quick-item-qty" min="1" value="1" required class="clean-input text-center font-bold">
-                <button type="submit" class="clean-btn-primary px-3" title="Tambah">
-                  <span class="material-symbols-outlined text-lg">add</span>
+                <input type="number" id="quick-item-qty" min="1" value="1" required class="pos-input text-center font-bold font-mono">
+                <button type="submit" class="pos-btn pos-btn-primary px-3 shrink-0" title="Tambah ke Keranjang">
+                  <span class="material-symbols-outlined text-lg" aria-hidden="true">add</span>
                 </button>
               </div>
             </div>
@@ -80,14 +107,17 @@
 
           <!-- Pilihan Cepat Barang Populer -->
           <% if (products.length > 0) { %>
-            <div class="mt-3 pt-3 border-t border-slate-100">
-              <span class="text-[11px] font-semibold text-slate-500 block mb-1.5">Pilihan Cepat:</span>
-              <div id="quick-presets-container" class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto">
-                <% products.slice(0, 8).forEach(function(prod) { %>
+            <div class="mt-3.5 pt-3 border-t border-[var(--color-border-subtle)]">
+              <span class="text-[11px] font-semibold text-[var(--color-text-muted)] block mb-1.5">Barang Populer:</span>
+              <div id="quick-presets-container" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+                <% products.slice(0, 10).forEach(function(prod) { %>
                   <% const isOut = prod.stock <= 0; %>
-                  <button type="button" onclick="CashierApp.addFromPreset('<%= prod.id %>')" class="px-2.5 py-1 rounded-md text-xs transition flex items-center gap-1 active:scale-95 <%= isOut ? 'bg-slate-100 text-slate-400 opacity-60 cursor-not-allowed' : 'bg-slate-100 hover:bg-slate-200 text-slate-700' %>" <%= isOut ? 'title="Stok Habis"' : '' %>>
+                  <button type="button" 
+                    onclick="CashierApp.addFromPreset('<%= prod.id %>')" 
+                    class="pos-quick-chip <%= isOut ? 'opacity-40 cursor-not-allowed' : '' %>"
+                    <%= isOut ? 'title="Stok Habis" disabled' : '' %>>
                     <span><%= prod.name %></span>
-                    <span class="text-slate-400 text-[11px]">(<%= formatRupiah(prod.sellingPrice).replace('Rp', '') %> | Stok: <%= prod.stock %>)</span>
+                    <span class="text-[var(--color-text-subtle)] text-[10px]">(<%= formatRupiah(prod.sellingPrice).replace('Rp', '') %> | <%= prod.stock %>)</span>
                   </button>
                 <% }); %>
               </div>
@@ -95,68 +125,73 @@
           <% } %>
         </div>
 
-        <!-- BAGIAN 2: TABEL KERANJANG -->
-        <div class="clean-card overflow-hidden">
-          <div class="p-3.5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h3 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-slate-500 text-base">shopping_cart</span>
+        <!-- BAGIAN 2: TABEL KERANJANG BELANJA -->
+        <div class="pos-card overflow-hidden">
+          <div class="pos-card-header">
+            <h3 class="font-bold text-xs sm:text-sm text-[var(--color-text-main)] flex items-center gap-2">
+              <span class="material-symbols-outlined text-[var(--color-text-muted)] text-base" aria-hidden="true">shopping_cart</span>
               <span>Daftar Belanjaan</span>
             </h3>
-            <button type="button" onclick="CashierApp.clearAll()" class="text-xs text-slate-500 hover:text-red-600 transition flex items-center gap-1">
-              <span class="material-symbols-outlined text-sm">clear_all</span>
-              <span>Kosongkan</span>
+            <button type="button" onclick="CashierApp.clearAll()" class="pos-btn pos-btn-ghost pos-btn-sm text-[var(--color-text-subtle)] hover:text-[var(--color-destructive)]" title="Tekan F9 untuk reset keranjang">
+              <span class="material-symbols-outlined text-sm" aria-hidden="true">delete_sweep</span>
+              <span>Kosongkan (F9)</span>
             </button>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-100">
+          <div class="pos-table-wrapper border-0 rounded-none">
+            <table class="pos-table">
+              <thead>
                 <tr>
-                  <th class="py-2.5 px-3">Barang</th>
-                  <th class="py-2.5 px-2 text-center w-28">Jumlah</th>
+                  <th class="py-2.5 px-3">Nama Barang</th>
+                  <th class="py-2.5 px-2 text-center w-32">Jumlah</th>
                   <th class="py-2.5 px-3 text-right">Harga</th>
-                  <th class="py-2.5 px-3 text-right">Total</th>
+                  <th class="py-2.5 px-3 text-right">Subtotal</th>
                   <th class="py-2.5 px-2 text-center w-12">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="cashier-items-body" class="divide-y divide-slate-100">
+              <tbody id="cashier-items-body" class="divide-y divide-[var(--color-border-subtle)]">
                 <!-- Render dinamis oleh cashier.js -->
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- BAGIAN 3: PEMBAYARAN & KALKULATOR -->
-        <div class="clean-card p-5">
-          <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2 mb-3">
-            <span class="material-symbols-outlined text-slate-600 text-lg">payments</span>
-            <span>Rincian Pembayaran</span>
-          </h3>
+        <!-- BAGIAN 3: RINCIAN PEMBAYARAN & KALKULASI -->
+        <div class="pos-card p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-sm text-[var(--color-text-main)] flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">payments</span>
+              <span>Rincian Pembayaran</span>
+            </h3>
+            <span class="text-[11px] text-[var(--color-text-muted)]">Kalkulasi Instan</span>
+          </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             <!-- Kolom Pengaturan Nota -->
-            <div class="space-y-3 bg-slate-50 p-3.5 rounded-lg border border-slate-200">
+            <div class="space-y-3 p-3.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)]">
               <div>
-                <label class="clean-label">Nomor Nota</label>
-                <input type="text" id="input-invoice-number" oninput="CashierApp.updateStateFromInputs()" value="<%= nextInvoice %>" class="clean-input font-mono font-bold text-slate-800">
+                <label class="pos-label">Nomor Nota</label>
+                <input type="text" id="input-invoice-number" oninput="CashierApp.updateStateFromInputs()" value="<%= nextInvoice %>" class="pos-input font-mono font-bold">
               </div>
+
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="clean-label">Nama Kasir</label>
+                  <label class="pos-label">Petugas Kasir</label>
                   <% if (config.pos && config.pos.cashiers && config.pos.cashiers.length > 0) { %>
-                    <select id="input-cashier" onchange="CashierApp.updateStateFromInputs()" class="clean-input">
+                    <select id="input-cashier" onchange="CashierApp.updateStateFromInputs()" class="pos-select font-medium">
                       <% config.pos.cashiers.forEach(function(c) { %>
                         <option value="<%= c %>" <%= (config.pos.defaultCashier === c) ? 'selected' : '' %>><%= c %></option>
                       <% }); %>
                     </select>
                   <% } else { %>
-                    <input type="text" id="input-cashier" oninput="CashierApp.updateStateFromInputs()" value="<%= config.pos.defaultCashier %>" class="clean-input">
+                    <input type="text" id="input-cashier" oninput="CashierApp.updateStateFromInputs()" value="<%= config.pos.defaultCashier %>" class="pos-input">
                   <% } %>
                 </div>
+
                 <div>
-                  <label class="clean-label">Metode Bayar</label>
-                  <select id="select-payment-method" onchange="CashierApp.updateStateFromInputs()" class="clean-input">
+                  <label class="pos-label">Metode Bayar</label>
+                  <select id="select-payment-method" onchange="CashierApp.updateStateFromInputs()" class="pos-select font-medium">
                     <option value="TUNAI">TUNAI</option>
                     <option value="QRIS">QRIS</option>
                     <option value="DEBIT">KARTU DEBIT</option>
@@ -164,57 +199,58 @@
                   </select>
                 </div>
               </div>
+
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="clean-label">Potongan Diskon (Rp)</label>
-                  <input type="number" id="input-discount" min="0" value="0" oninput="CashierApp.updateStateFromInputs()" class="clean-input font-medium">
+                  <label class="pos-label">
+                    <span>Diskon (Rp)</span>
+                    <span class="pos-kbd">F8</span>
+                  </label>
+                  <input type="number" id="input-discount" min="0" value="0" oninput="CashierApp.updateStateFromInputs()" class="pos-input font-mono">
                 </div>
                 <div>
-                  <label class="clean-label">Pajak PPN (%)</label>
-                  <input type="number" id="input-tax-percent" min="0" value="<%= config.pos.defaultTaxPercent %>" oninput="CashierApp.updateStateFromInputs()" class="clean-input font-medium">
+                  <label class="pos-label">Pajak PPN (%)</label>
+                  <input type="number" id="input-tax-percent" min="0" value="<%= config.pos.defaultTaxPercent %>" oninput="CashierApp.updateStateFromInputs()" class="pos-input font-mono">
                 </div>
               </div>
             </div>
 
             <!-- Kolom Uang Tunai & Total -->
-            <div class="space-y-3 bg-slate-50 p-3.5 rounded-lg border border-slate-200 flex flex-col justify-between">
+            <div class="space-y-3 p-3.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] flex flex-col justify-between">
               <div>
-                <label class="clean-label text-slate-700">Uang Diterima (Rp)</label>
-                <input type="number" id="input-cash" min="0" value="0" oninput="CashierApp.updateStateFromInputs()" onkeydown="if(event.key === '-' || event.key === 'e' || event.key === '+') event.preventDefault();" class="clean-input font-bold text-base text-slate-900" placeholder="0">
+                <label class="pos-label text-[var(--color-text-main)]">Uang Diterima Pelanggan (Rp)</label>
+                <input type="number" id="input-cash" min="0" value="0" oninput="CashierApp.updateStateFromInputs()" class="pos-input font-mono font-bold text-base text-[var(--color-text-main)]" placeholder="0">
                 <div id="cash-status-note" class="hidden"></div>
               </div>
 
-              <!-- Tombol Cepat Nominal Pecahan Rupiah -->
+              <!-- Tombol Cepat Nominal Rupiah (Quick Cash Chips) -->
               <div>
                 <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Pilihan Cepat:</span>
-                  <button type="button" onclick="CashierApp.setFastCash('reset')" class="text-[10px] text-slate-400 hover:text-red-600 transition flex items-center gap-0.5" title="Reset Uang Diterima ke 0">
-                    <span class="material-symbols-outlined text-xs">restart_alt</span>
+                  <span class="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">Nominal Cepat:</span>
+                  <button type="button" onclick="CashierApp.setFastCash('reset')" class="text-[10px] text-[var(--color-text-subtle)] hover:text-[var(--color-destructive)] transition flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-xs" aria-hidden="true">restart_alt</span>
                     <span>Reset (0)</span>
                   </button>
                 </div>
                 <div class="flex flex-wrap gap-1.5">
-                  <button type="button" onclick="CashierApp.setFastCash('exact')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs active:scale-95 transition" title="Bayar Pas Sesuai Total Belanja">Uang Pas</button>
-                  <button type="button" onclick="CashierApp.setFastCash(500)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 500">+500</button>
-                  <button type="button" onclick="CashierApp.setFastCash(1000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 1.000">+1k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(2000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 2.000">+2k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(5000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 5.000">+5k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(10000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 10.000">+10k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(20000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 20.000">+20k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(50000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 50.000">+50k</button>
-                  <button type="button" onclick="CashierApp.setFastCash(100000)" class="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 text-xs border border-slate-300 font-medium active:scale-95 transition" title="Tambah Rp 100.000">+100k</button>
+                  <button type="button" onclick="CashierApp.setFastCash('exact')" class="pos-quick-chip font-bold bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)]">Uang Pas</button>
+                  <button type="button" onclick="CashierApp.setFastCash(10000)" class="pos-quick-chip">+10k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(20000)" class="pos-quick-chip">+20k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(50000)" class="pos-quick-chip">+50k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(100000)" class="pos-quick-chip">+100k</button>
+                  <button type="button" onclick="CashierApp.setFastCash(200000)" class="pos-quick-chip">+200k</button>
                 </div>
               </div>
 
               <!-- Tampilan Total & Kembalian -->
-              <div class="pt-2 border-t border-slate-200 flex justify-between items-end">
+              <div class="pt-2 border-t border-[var(--color-border)] flex justify-between items-end">
                 <div>
-                  <span class="text-xs text-slate-500" id="label-change">Kembalian:</span>
-                  <div id="val-change" class="text-lg font-bold text-emerald-600">Rp0</div>
+                  <span class="text-xs text-[var(--color-text-muted)]" id="label-change">Kembalian:</span>
+                  <div id="val-change" class="text-lg font-bold font-mono" style="color: var(--color-success)">Rp0</div>
                 </div>
                 <div class="text-right">
-                  <span class="text-xs text-slate-500">Total Belanja:</span>
-                  <div id="val-grandtotal" class="text-xl font-extrabold text-red-600">Rp0</div>
+                  <span class="text-xs text-[var(--color-text-muted)]">Total Belanja:</span>
+                  <div id="val-grandtotal" class="text-xl font-extrabold font-mono" style="color: var(--color-primary)">Rp0</div>
                 </div>
               </div>
 
@@ -222,15 +258,19 @@
 
           </div>
 
-          <!-- TOMBOL AKSI UTAMA DENGAN VALIDASI SEBELUM CETAK -->
-          <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-            <button type="button" onclick="CashierApp.startCheckout('print')" class="clean-btn-primary flex-1 py-2.5 text-sm">
-              <span class="material-symbols-outlined text-lg">print</span>
-              <span>Cetak Struk</span>
+          <!-- TOMBOL AKSI UTAMA KASIR -->
+          <div class="mt-4 pt-3 border-t border-[var(--color-border-subtle)] flex flex-col sm:flex-row gap-2.5">
+            <button type="button" onclick="CashierApp.startCheckout('print')" class="pos-btn pos-btn-success flex-1 py-3 text-sm" title="Tekan F4 untuk Bayar">
+              <span class="material-symbols-outlined text-lg" aria-hidden="true">print</span>
+              <span>Cetak Struk (F4)</span>
             </button>
-            <button type="button" id="btn-download-png" onclick="CashierApp.startCheckout('png')" class="clean-btn-secondary flex-1 py-2.5 text-sm">
-              <span class="material-symbols-outlined text-lg text-slate-600">image</span>
-              <span>Simpan Gambar (WhatsApp)</span>
+            <button type="button" id="btn-download-png" onclick="CashierApp.startCheckout('png')" class="pos-btn pos-btn-secondary flex-1 py-3 text-sm">
+              <span class="material-symbols-outlined text-lg" aria-hidden="true">image</span>
+              <span>Simpan Gambar (PNG)</span>
+            </button>
+            <button type="button" onclick="CashierApp.copyWhatsAppReceipt()" class="pos-btn pos-btn-secondary px-3 py-3 text-sm" title="Salin Teks Format WhatsApp">
+              <span class="material-symbols-outlined text-lg text-emerald-600" aria-hidden="true">chat</span>
+              <span>Salin WA</span>
             </button>
           </div>
 
@@ -238,20 +278,27 @@
 
       </section>
 
-      <!-- KOLOM KANAN: TAMPILAN STRUK (5 KOLOM) -->
-      <section class="lg:col-span-5 flex flex-col items-center gap-3 sticky top-28" data-aos="fade-left">
+      <!-- KOLOM KANAN: PRATINJAU STRUK THERMAL (5 KOLOM) -->
+      <section class="lg:col-span-5 flex flex-col items-center gap-3 sticky top-24" data-aos="fade-left">
         
-        <div class="w-full max-w-[360px] flex justify-between items-center text-xs text-slate-500 px-1 no-print">
+        <!-- Header Kontrol Pratinjau Struk -->
+        <div class="w-full max-w-[360px] flex justify-between items-center text-xs text-[var(--color-text-muted)] px-1 no-print">
           <span class="font-semibold flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-base text-slate-500">receipt</span>
-            <span>Tampilan Struk (<%= config.pos.paperSize %>)</span>
+            <span class="material-symbols-outlined text-base" aria-hidden="true">receipt</span>
+            <span>Struk Thermal (<span id="current-paper-label"><%= config.pos.paperSize %></span>)</span>
           </span>
+
+          <!-- Quick Toggle Ukuran Kertas 58mm / 80mm -->
+          <div class="flex items-center p-0.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
+            <button type="button" id="btn-paper-58" onclick="CashierApp.setPaperSize('58mm')" class="px-2 py-0.5 rounded text-[11px] font-semibold transition <%= config.pos.paperSize === '58mm' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-text-muted)]' %>">58mm</button>
+            <button type="button" id="btn-paper-80" onclick="CashierApp.setPaperSize('80mm')" class="px-2 py-0.5 rounded text-[11px] font-semibold transition <%= config.pos.paperSize === '80mm' ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-text-muted)]' %>">80mm</button>
+          </div>
         </div>
 
-        <!-- WADAH KERTAS STRUK -->
-        <div class="w-full max-w-[360px] receipt-paper-container paper-<%= config.pos.paperSize %> bg-white" id="receipt-paper">
+        <!-- WADAH KERTAS STRUK THERMAL (Selalu Putih Murni & Font Monospace) -->
+        <div class="w-full max-w-[360px] receipt-paper-container paper-<%= config.pos.paperSize %>" id="receipt-paper">
           
-          <div class="p-5 text-slate-900 thermal-receipt" style="font-family: 'Courier Prime', monospace;">
+          <div class="p-5 text-black thermal-receipt" style="font-family: 'Courier Prime', monospace;">
             
             <!-- Logo Toko Jika Ada -->
             <% if (config.store.useLogoOnReceipt && config.store.logoUrl) { %>
@@ -266,17 +313,17 @@
                 <%= config.store.name %>
               </h2>
               <% if (config.store.tagline) { %>
-                <p class="text-[10px] text-slate-600 mt-0.5">
+                <p class="text-[10px] text-black/70 mt-0.5">
                   <%= config.store.tagline %>
                 </p>
               <% } %>
               <% if (config.store.address) { %>
-                <p class="text-[9px] text-slate-500 mt-0.5 leading-tight">
+                <p class="text-[9px] text-black/70 mt-0.5 leading-tight">
                   <%= config.store.address %>
                 </p>
               <% } %>
               <% if (config.store.phone) { %>
-                <p class="text-[9px] text-slate-500">
+                <p class="text-[9px] text-black/70">
                   Telp: <%= config.store.phone %>
                 </p>
               <% } %>
@@ -285,11 +332,11 @@
             <div class="thermal-dashed-line"></div>
 
             <!-- Metadata Nota -->
-            <div class="text-[10px] text-slate-700 grid grid-cols-2 gap-y-0.5 font-mono mb-1">
-              <div>No: <span id="preview-receipt-no" class="font-bold"><%= nextInvoice %></span></div>
+            <div class="text-[10px] text-black/80 grid grid-cols-2 gap-y-0.5 font-mono mb-1">
+              <div>No: <span id="preview-receipt-no" class="font-bold text-black"><%= nextInvoice %></span></div>
               <div class="text-right"><span id="preview-date"><%= new Date().toLocaleDateString('id-ID') %></span></div>
               <div>Kasir: <span id="preview-cashier"><%= config.pos.defaultCashier %></span></div>
-              <div class="text-right">Bayar: <span id="preview-payment-method" class="font-bold">TUNAI</span></div>
+              <div class="text-right">Bayar: <span id="preview-payment-method" class="font-bold text-black">TUNAI</span></div>
             </div>
 
             <div class="thermal-dashed-line"></div>
@@ -299,7 +346,7 @@
               <span>BARANG</span>
               <span>TOTAL</span>
             </div>
-            <div class="receipt-divider-dotted"></div>
+            <div class="thermal-dotted-line"></div>
 
             <!-- Daftar Item Dinamis -->
             <div id="preview-items-list" class="min-h-[40px] flex flex-col gap-1">
@@ -314,20 +361,20 @@
                 <span>SUBTOTAL</span>
                 <span id="prev-subtotal" class="font-bold">Rp0</span>
               </div>
-              <div class="flex justify-between text-slate-600">
+              <div class="flex justify-between text-black/70">
                 <span>DISKON</span>
                 <span id="prev-discount">Rp0</span>
               </div>
-              <div class="flex justify-between text-slate-600">
+              <div class="flex justify-between text-black/70">
                 <span>PPN (<span id="prev-tax-rate"><%= config.pos.defaultTaxPercent %></span>%)</span>
                 <span id="prev-tax-amount">Rp0</span>
               </div>
-              <div class="receipt-divider-dotted"></div>
+              <div class="thermal-dotted-line"></div>
               <div class="flex justify-between font-bold text-xs text-black pt-0.5">
                 <span>TOTAL AKHIR</span>
                 <span id="prev-grandtotal" class="text-black">Rp0</span>
               </div>
-              <div class="flex justify-between text-slate-700 pt-0.5">
+              <div class="flex justify-between text-black/80 pt-0.5">
                 <span>BAYAR</span>
                 <span id="prev-cash">Rp0</span>
               </div>
@@ -341,7 +388,7 @@
 
             <!-- Pesan Footer Struk -->
             <div class="text-center mt-2 flex flex-col items-center gap-1.5">
-              <p class="text-[9px] text-slate-600 leading-relaxed whitespace-pre-line" id="preview-footer-note">
+              <p class="text-[9px] text-black/70 leading-relaxed whitespace-pre-line" id="preview-footer-note">
                 <%= config.pos.footerNote %>
               </p>
             </div>
@@ -356,81 +403,78 @@
 
   </main>
 
-  <!-- MODAL KONFIRMASI / VALIDASI SEBELUM CETAK & SIMPAN -->
-  <div id="order-confirm-modal" class="fixed inset-0 z-50 bg-black/40 hidden items-center justify-center p-4">
-    <div class="clean-card w-full max-w-md p-6 bg-white shadow-2xl relative" data-aos="zoom-in" data-aos-duration="250">
+  <!-- MODAL KONFIRMASI PEMBAYARAN & CETAK -->
+  <div id="order-confirm-modal" class="pos-modal-backdrop hidden items-center justify-center p-4">
+    <div class="pos-modal-card p-5 sm:p-6 relative">
       
-      <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-        <h3 class="font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
-          <span class="material-symbols-outlined text-slate-700">fact_check</span>
-          <span>Periksa Kembali Pesanan</span>
+      <div class="flex justify-between items-center mb-3 pb-2.5 border-b border-[var(--color-border-subtle)]">
+        <h3 class="font-bold text-sm sm:text-base text-[var(--color-text-main)] flex items-center gap-2">
+          <span id="conf-modal-icon" class="material-symbols-outlined text-lg text-[var(--color-primary)]" aria-hidden="true">fact_check</span>
+          <span id="conf-modal-title">Konfirmasi Pesanan Kasir</span>
         </h3>
-        <button type="button" onclick="CashierApp.closeConfirmModal()" class="text-slate-400 hover:text-slate-600">
-          <span class="material-symbols-outlined">close</span>
+        <button type="button" onclick="CashierApp.closeConfirmModal()" class="p-1 rounded text-[var(--color-text-subtle)] hover:text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
       </div>
 
-      <p class="text-xs text-slate-500 mb-3">
-        Pastikan daftar pesanan dan uang pembayaran pelanggan sudah sesuai sebelum dicetak:
+      <p id="conf-modal-desc" class="text-xs text-[var(--color-text-muted)] mb-3 leading-relaxed">
+        Periksa kembali rincian belanjaan dan pembayaran pelanggan sebelum diproses:
       </p>
 
       <!-- Ringkasan Info Nota -->
-      <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1 mb-3">
+      <div class="p-3 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] text-xs space-y-1.5 mb-3 font-mono">
         <div class="flex justify-between">
-          <span class="text-slate-500">Nomor Nota:</span>
-          <span id="conf-invoice" class="font-bold font-mono text-slate-800">-</span>
+          <span class="text-[var(--color-text-muted)] font-sans">Nomor Nota:</span>
+          <span id="conf-invoice" class="font-bold text-[var(--color-text-main)]">-</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-500">Kasir:</span>
-          <span id="conf-cashier" class="font-medium text-slate-800">-</span>
+          <span class="text-[var(--color-text-muted)] font-sans">Kasir:</span>
+          <span id="conf-cashier" class="font-medium text-[var(--color-text-main)]">-</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-500">Pembayaran:</span>
-          <span id="conf-method" class="font-medium text-slate-800">-</span>
+          <span class="text-[var(--color-text-muted)] font-sans">Metode Bayar:</span>
+          <span id="conf-method" class="font-medium text-[var(--color-text-main)]">-</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-500">Total Item:</span>
-          <span id="conf-total-items" class="font-medium text-slate-800">-</span>
+          <span class="text-[var(--color-text-muted)] font-sans">Total Barang:</span>
+          <span id="conf-total-items" class="font-medium text-[var(--color-text-main)]">-</span>
         </div>
       </div>
 
       <!-- Ringkasan Item Pesanan -->
-      <div class="border border-slate-200 rounded-lg p-2.5 max-h-36 overflow-y-auto mb-3" id="conf-items-summary">
+      <div class="border border-[var(--color-border)] rounded-xl p-3 max-h-36 overflow-y-auto mb-3 bg-[var(--color-bg-card)]" id="conf-items-summary">
         <!-- Terisi dinamis oleh JS -->
       </div>
 
       <!-- Ringkasan Finansial -->
-      <div class="space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs font-mono">
-        <div class="flex justify-between font-bold text-sm text-slate-900">
-          <span>Total Belanja:</span>
-          <span id="conf-grandtotal" class="text-red-600">Rp0</span>
+      <div class="space-y-1.5 p-3.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] text-xs font-mono">
+        <div class="flex justify-between font-bold text-sm text-[var(--color-text-main)]">
+          <span class="font-sans">Total Belanja:</span>
+          <span id="conf-grandtotal" style="color: var(--color-primary)">Rp0</span>
         </div>
-        <div class="flex justify-between text-slate-600">
-          <span>Uang Diterima:</span>
+        <div class="flex justify-between text-[var(--color-text-muted)]">
+          <span class="font-sans">Uang Diterima:</span>
           <span id="conf-cash">Rp0</span>
         </div>
-        <div class="flex justify-between font-bold text-emerald-600">
-          <span>Kembalian:</span>
+        <div class="flex justify-between font-bold text-sm" style="color: var(--color-success)">
+          <span class="font-sans">Kembalian:</span>
           <span id="conf-change">Rp0</span>
         </div>
       </div>
 
-      <!-- Peringatan Kurang Bayar (Jika ada) -->
-      <div id="conf-warning-box" class="hidden mt-2 p-2 rounded bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium"></div>
-
       <!-- Tombol Aksi Konfirmasi -->
-      <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
+      <div class="mt-4 pt-3 border-t border-[var(--color-border-subtle)] flex flex-col gap-2">
         <div class="flex gap-2">
-          <button type="button" onclick="CashierApp.closeConfirmModal()" class="clean-btn-secondary text-xs flex-1">
-            <span>Periksa Lagi (Batal)</span>
+          <button type="button" onclick="CashierApp.closeConfirmModal()" class="pos-btn pos-btn-secondary text-xs flex-1">
+            <span>Periksa Lagi (Esc)</span>
           </button>
-          <button type="button" onclick="CashierApp.confirmAndExecute(true)" class="clean-btn-primary text-xs flex-1">
-            <span class="material-symbols-outlined text-sm">check</span>
-            <span>Ya, Cetak & Simpan</span>
+          <button type="button" id="btn-conf-primary" onclick="CashierApp.confirmAndExecute(true)" class="pos-btn pos-btn-success text-xs flex-1">
+            <span class="material-symbols-outlined text-sm" aria-hidden="true">check</span>
+            <span id="btn-conf-primary-text">Ya, Cetak & Simpan</span>
           </button>
         </div>
         <div class="text-center pt-1">
-          <button type="button" onclick="CashierApp.confirmAndExecute(false)" class="text-[11px] text-slate-400 hover:text-slate-700 underline">
+          <button type="button" id="btn-conf-secondary" onclick="CashierApp.confirmAndExecute(false)" class="text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] underline">
             Hanya Cetak (Tanpa Simpan ke Riwayat)
           </button>
         </div>
@@ -445,7 +489,7 @@
   <!-- Toast Notifikasi -->
   <%- include('../partials/toast') %>
 
-  <!-- Script Konfigurasi & Produk -->
+  <!-- Script Data Awal -->
   <script>
     window.APP_CONFIG = <%- JSON.stringify(config) %>;
     window.STORE_PRODUCTS = <%- JSON.stringify(products) %>;
@@ -482,13 +526,13 @@
             stockBadge.classList.remove('hidden');
             const qty = parseInt(qtyInput.value, 10) || 1;
             if (matched.stock <= 0) {
-              stockBadge.className = 'text-[11px] font-medium mt-1 text-red-600';
+              stockBadge.className = 'text-[11px] font-medium mt-1 text-[var(--color-destructive)]';
               stockBadge.innerText = 'Stok produk ini telah habis (0 ' + (matched.unit || 'Pcs') + ')';
             } else if (qty > matched.stock) {
-              stockBadge.className = 'text-[11px] font-medium mt-1 text-amber-600';
-              stockBadge.innerText = 'Peringatan: Jumlah (' + qty + ') melebihi stok yang ada (' + matched.stock + ' ' + (matched.unit || 'Pcs') + ')';
+              stockBadge.className = 'text-[11px] font-medium mt-1 text-[var(--color-warning)]';
+              stockBadge.innerText = 'Peringatan: Jumlah (' + qty + ') melebihi stok tersedia (' + matched.stock + ' ' + (matched.unit || 'Pcs') + ')';
             } else {
-              stockBadge.className = 'text-[11px] font-medium mt-1 text-emerald-600';
+              stockBadge.className = 'text-[11px] font-medium mt-1 text-[var(--color-success)]';
               stockBadge.innerText = 'Stok tersedia: ' + matched.stock + ' ' + (matched.unit || 'Pcs');
             }
           }

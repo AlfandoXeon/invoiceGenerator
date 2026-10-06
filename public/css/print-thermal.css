@@ -38,7 +38,8 @@
   }
 
   /* Format pembungkus struk */
-  .receipt-print-wrapper {
+  .receipt-print-wrapper,
+  #receipt-paper {
     display: block !important;
     position: absolute !important;
     left: 0 !important;

@@ -1,201 +1,49 @@
 /* ==========================================================================
    APP.CSS - Xeon Invoice Generator
-   Tema: Clean, Minimalis, Ramah Pengguna & Dukungan Multi-Tema Lengkap
-   Mendukung: Terang Bersih (Light), Krem Lembut (Warm), Abu Minimalis (Slate), Gelap Halus (Dark)
+   Arsitektur Desain 3-Lapis (Primitives -> Semantic -> Components)
+   Kompatibel Penuh: Light, Dark, Warm, Slate
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. DEFINISI VARIABEL TEMA
-   -------------------------------------------------------------------------- */
+/* 1. IMPOR LAPISAN TOKEN DESAIN */
+@import './tokens/primitives.css';
+@import './tokens/semantic.css';
+@import './tokens/components.css';
 
-/* Default: Tema Terang Bersih */
-:root,
-[data-theme="light"],
-body[data-theme="light"] {
-  --bg-page: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-input: #ffffff;
-  --bg-subtle: #f1f5f9;
-  --border-color: #e2e8f0;
-  --border-subtle: #f1f5f9;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
-  --header-bg: #ffffff;
-  --nav-bg: #ffffff;
-  --modal-bg: #ffffff;
-  --primary: #dc2626;
-  --primary-hover: #b91c1c;
+/* 2. ATURAN GLOBAL ELEMEN */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
-
-/* Tema 2: Krem Lembut / Warm Cream */
-[data-theme="warm"],
-body[data-theme="warm"] {
-  --bg-page: #fcfaf6;
-  --bg-card: #ffffff;
-  --bg-input: #ffffff;
-  --bg-subtle: #f6f1e8;
-  --border-color: #e9e1d3;
-  --border-subtle: #f2ebe0;
-  --text-main: #292524;
-  --text-muted: #78716c;
-  --text-subtle: #a8a29e;
-  --header-bg: #ffffff;
-  --nav-bg: #ffffff;
-  --modal-bg: #ffffff;
-  --primary: #dc2626;
-  --primary-hover: #b91c1c;
-}
-
-/* Tema 3: Abu-Abu Minimalis / Slate */
-[data-theme="slate"],
-body[data-theme="slate"] {
-  --bg-page: #edf2f7;
-  --bg-card: #ffffff;
-  --bg-input: #ffffff;
-  --bg-subtle: #e2e8f0;
-  --border-color: #cbd5e1;
-  --border-subtle: #e2e8f0;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
-  --header-bg: #ffffff;
-  --nav-bg: #ffffff;
-  --modal-bg: #ffffff;
-  --primary: #dc2626;
-  --primary-hover: #b91c1c;
-}
-
-/* Tema 4: Gelap Lembut / Dark Soft (Bukan Cyberpunk/Neon) */
-[data-theme="dark"],
-body[data-theme="dark"] {
-  --bg-page: #111215;
-  --bg-card: #1a1b1f;
-  --bg-input: #23242a;
-  --bg-subtle: #25272e;
-  --border-color: #2e3038;
-  --border-subtle: #24252b;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --text-subtle: #6b7280;
-  --header-bg: #1a1b1f;
-  --nav-bg: #1a1b1f;
-  --modal-bg: #1a1b1f;
-  --primary: #ef4444;
-  --primary-hover: #dc2626;
-}
-
-/* --------------------------------------------------------------------------
-   2. ATURAN GLOBAL ELEMEN SESUAI TEMA
-   -------------------------------------------------------------------------- */
 
 html, body {
-  background-color: var(--bg-page) !important;
-  color: var(--text-main) !important;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  font-family: var(--font-family-sans);
   min-height: 100vh;
   margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-/* Header & Navigasi */
+/* Header & Navigasi Global */
 #app-navbar {
-  background-color: var(--header-bg) !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
+  background-color: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-main);
 }
 
-nav {
-  background-color: var(--nav-bg) !important;
-  border-bottom: 1px solid var(--border-color) !important;
+nav#app-navigation {
+  background-color: var(--color-nav-bg);
+  border-bottom: 1px solid var(--color-border);
 }
 
 footer {
-  background-color: var(--header-bg) !important;
-  border-top: 1px solid var(--border-color) !important;
-  color: var(--text-muted) !important;
-}
-
-/* Cards & Kontainer */
-.clean-card {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease;
-}
-
-/* Form Inputs */
-.clean-input {
-  background-color: var(--bg-input) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
-  border-radius: 0.5rem;
-  padding: 0.55rem 0.85rem;
-  font-size: 0.875rem;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
-}
-
-.clean-input:focus {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
-}
-
-.clean-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted) !important;
-  margin-bottom: 0.3rem;
-}
-
-/* Tombol Aksi */
-.clean-btn-primary {
-  background-color: var(--primary) !important;
-  color: #ffffff !important;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  padding: 0.55rem 1.15rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease;
-}
-
-.clean-btn-primary:hover {
-  background-color: var(--primary-hover) !important;
-}
-
-.clean-btn-primary:active {
-  transform: scale(0.98);
-}
-
-.clean-btn-secondary {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  padding: 0.55rem 1.15rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.clean-btn-secondary:hover {
-  background-color: var(--bg-subtle) !important;
-  border-color: var(--border-color) !important;
+  background-color: var(--color-header-bg);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
 }
 
 /* Material Symbols Vertikal Alignment */
@@ -203,101 +51,150 @@ footer {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   vertical-align: middle;
   line-height: 1;
+  display: inline-block;
+  user-select: none;
 }
 
-/* Scrollbar Sederhana */
+/* Scrollbar Terpadu */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-subtle);
+  background: var(--color-bg-subtle);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-text-subtle);
 }
 
-/* --------------------------------------------------------------------------
-   3. OVERRIDE WARNA TEKS & TABEL UNTUK TEMA GELAP (FIX BUG TEKS HITAM)
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   3. ALIAS KELAS (BACKWARD COMPATIBILITY DENGAN TEMA LAMA)
+   Memastikan kelas lama otomatis menggunakan sistem token baru
+   ========================================================================== */
+.clean-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.clean-input {
+  background-color: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.85rem;
+  font-size: var(--font-size-sm);
+  width: 100%;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-normal);
+}
+
+.clean-input:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+.clean-input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.clean-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1-5);
+}
+
+.clean-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-fg);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  border: 1px solid var(--color-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform 80ms ease;
+  user-select: none;
+}
+
+.clean-btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.clean-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.clean-btn-secondary {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.clean-btn-secondary:hover {
+  background-color: var(--color-bg-subtle);
+  border-color: var(--color-border-strong);
+}
+
+.clean-btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   4. PENYELARASAN TAILWIND PADA MODE GELAP / DARK THEME
+   Menghilangkan masalah teks gelap di latar belakang gelap
+   ========================================================================== */
+[data-theme="dark"] .bg-slate-50,
+[data-theme="dark"] .bg-slate-100 {
+  background-color: var(--color-bg-subtle) !important;
+}
 
 [data-theme="dark"] .text-slate-900,
 [data-theme="dark"] .text-slate-800,
-[data-theme="dark"] .text-slate-700,
-[data-theme="dark"] h1, 
-[data-theme="dark"] h2, 
-[data-theme="dark"] h3, 
-[data-theme="dark"] h4 {
-  color: #f3f4f6 !important;
+[data-theme="dark"] .text-slate-700 {
+  color: var(--color-text-main) !important;
 }
 
 [data-theme="dark"] .text-slate-600,
 [data-theme="dark"] .text-slate-500 {
-  color: #9ca3af !important;
+  color: var(--color-text-muted) !important;
 }
 
 [data-theme="dark"] .text-slate-400 {
-  color: #6b7280 !important;
-}
-
-[data-theme="dark"] .bg-slate-50,
-[data-theme="dark"] .bg-slate-50\/50,
-[data-theme="dark"] .bg-slate-100 {
-  background-color: #222329 !important;
-}
-
-[data-theme="dark"] .bg-white:not(.receipt-paper-container):not(.receipt-paper-container *) {
-  background-color: #1a1b1f !important;
+  color: var(--color-text-subtle) !important;
 }
 
 [data-theme="dark"] .border-slate-100,
 [data-theme="dark"] .border-slate-200,
 [data-theme="dark"] .border-slate-300 {
-  border-color: #2e3038 !important;
-}
-
-[data-theme="dark"] thead {
-  background-color: #222329 !important;
-  color: #9ca3af !important;
-  border-color: #2e3038 !important;
-}
-
-[data-theme="dark"] tr:hover {
-  background-color: #24262c !important;
+  border-color: var(--color-border) !important;
 }
 
 [data-theme="dark"] select option {
-  background-color: #1a1b1f !important;
-  color: #f3f4f6 !important;
-}
-
-/* --------------------------------------------------------------------------
-   4. KERTAS STRUK THERMAL HARUS SELALU PUTIH & TEKS HITAM (KERTAS FISIK ASLI)
-   -------------------------------------------------------------------------- */
-.receipt-paper-container,
-.receipt-paper-container * {
-  background-color: #ffffff;
-  color: #000000 !important;
-  border-color: #cbd5e1;
-}
-
-.receipt-paper-container {
-  box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-  border-radius: 0.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.thermal-dashed-line {
-  border-top: 1px dashed #64748b !important;
-  margin: 0.6rem 0 !important;
-}
-
-.receipt-divider-dotted {
-  border-top: 1px dotted #cbd5e1 !important;
-  margin: 0.4rem 0 !important;
+  background-color: var(--color-bg-modal) !important;
+  color: var(--color-text-main) !important;
 }

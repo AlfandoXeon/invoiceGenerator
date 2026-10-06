@@ -1,0 +1,274 @@
+/**
+ * SEMANTIC DESIGN TOKENS
+ * Xeon Invoice Generator - POS Design System
+ * Alias berdasarkan tujuan fungsional dan konteks tema (Light, Dark, Warm, Slate).
+ */
+
+/* ==========================================================================
+   1. TEMA DEFAULT: LIGHT (TERANG BERSIH & MODERN)
+   ========================================================================== */
+:root,
+[data-theme="light"],
+body[data-theme="light"] {
+  /* Backgrounds */
+  --color-bg-page: var(--slate-50);
+  --color-bg-card: var(--white);
+  --color-bg-subtle: var(--slate-100);
+  --color-bg-input: var(--white);
+  --color-bg-hover: #f8fafc;
+  --color-bg-modal: var(--white);
+  --color-bg-table-header: #f8fafc;
+  --color-bg-table-stripe: #fafbfd;
+
+  /* Text & Content */
+  --color-text-main: var(--slate-900);
+  --color-text-muted: var(--slate-600);
+  --color-text-subtle: var(--slate-400);
+  --color-text-inverse: var(--white);
+
+  /* Borders & Dividers */
+  --color-border: var(--slate-200);
+  --color-border-subtle: var(--slate-100);
+  --color-border-strong: var(--slate-300);
+  --color-border-focus: var(--blue-600);
+
+  /* Primary Brand (Navy) */
+  --color-primary: var(--navy-700);
+  --color-primary-hover: var(--navy-800);
+  --color-primary-subtle: var(--navy-50);
+  --color-primary-fg: var(--white);
+
+  /* Secondary (Action Blue) */
+  --color-secondary: var(--blue-600);
+  --color-secondary-hover: var(--blue-700);
+  --color-secondary-subtle: var(--blue-50);
+  --color-secondary-fg: var(--white);
+
+  /* Success / Paid / Active (Emerald) */
+  --color-success: var(--emerald-600);
+  --color-success-hover: var(--emerald-700);
+  --color-success-subtle: var(--emerald-50);
+  --color-success-fg: var(--white);
+
+  /* Warning / Low Stock (Amber) */
+  --color-warning: var(--amber-600);
+  --color-warning-subtle: var(--amber-50);
+  --color-warning-fg: var(--white);
+
+  /* Destructive / Out of Stock / Delete (Rose) */
+  --color-destructive: var(--rose-600);
+  --color-destructive-hover: var(--rose-700);
+  --color-destructive-subtle: var(--rose-50);
+  --color-destructive-fg: var(--white);
+
+  /* Header & Navigation */
+  --color-header-bg: var(--white);
+  --color-nav-bg: var(--white);
+  --color-nav-active-bg: var(--navy-50);
+  --color-nav-active-text: var(--navy-700);
+  --color-nav-active-border: var(--navy-200);
+
+  /* Focus Ring */
+  --color-ring: rgba(30, 58, 95, 0.2);
+}
+
+/* ==========================================================================
+   2. TEMA DARK: GELAP MODERN & MELEDAK ELEGAN (NON-GLARE)
+   ========================================================================== */
+[data-theme="dark"],
+body[data-theme="dark"] {
+  /* Backgrounds */
+  --color-bg-page: #0b0f19;
+  --color-bg-card: #151d2a;
+  --color-bg-subtle: #1c2637;
+  --color-bg-input: #101623;
+  --color-bg-hover: #1e293b;
+  --color-bg-modal: #151d2a;
+  --color-bg-table-header: #101623;
+  --color-bg-table-stripe: #121926;
+
+  /* Text & Content (Kontras Tinggi > 4.5:1) */
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-text-inverse: #0f172a;
+
+  /* Borders & Dividers */
+  --color-border: #233044;
+  --color-border-subtle: #1c2637;
+  --color-border-strong: #33445c;
+  --color-border-focus: var(--blue-500);
+
+  /* Primary Brand (Navy Lighter in Dark Mode) */
+  --color-primary: #2d5584;
+  --color-primary-hover: #3b6ba4;
+  --color-primary-subtle: rgba(45, 85, 132, 0.25);
+  --color-primary-fg: var(--white);
+
+  /* Secondary (Action Blue) */
+  --color-secondary: #3b82f6;
+  --color-secondary-hover: #60a5fa;
+  --color-secondary-subtle: rgba(59, 130, 246, 0.2);
+  --color-secondary-fg: var(--white);
+
+  /* Success / Paid / Active (Emerald) */
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-success-subtle: rgba(16, 185, 129, 0.2);
+  --color-success-fg: var(--white);
+
+  /* Warning / Low Stock (Amber) */
+  --color-warning: #f59e0b;
+  --color-warning-subtle: rgba(245, 158, 11, 0.2);
+  --color-warning-fg: var(--slate-950);
+
+  /* Destructive / Out of Stock / Delete (Rose) */
+  --color-destructive: #f43f5e;
+  --color-destructive-hover: #fb7185;
+  --color-destructive-subtle: rgba(244, 63, 94, 0.2);
+  --color-destructive-fg: var(--white);
+
+  /* Header & Navigation */
+  --color-header-bg: #111722;
+  --color-nav-bg: #111722;
+  --color-nav-active-bg: rgba(59, 130, 246, 0.15);
+  --color-nav-active-text: #93c5fd;
+  --color-nav-active-border: #2563eb;
+
+  /* Focus Ring */
+  --color-ring: rgba(59, 130, 246, 0.35);
+}
+
+/* ==========================================================================
+   3. TEMA WARM: KREM HANGAT & NYAMAN DI MATA
+   ========================================================================== */
+[data-theme="warm"],
+body[data-theme="warm"] {
+  /* Backgrounds */
+  --color-bg-page: #fbf9f5;
+  --color-bg-card: var(--white);
+  --color-bg-subtle: #f3efe6;
+  --color-bg-input: var(--white);
+  --color-bg-hover: #f7f4ed;
+  --color-bg-modal: var(--white);
+  --color-bg-table-header: #f6f2ea;
+  --color-bg-table-stripe: #faf8f3;
+
+  /* Text & Content */
+  --color-text-main: #292524;
+  --color-text-muted: #78716c;
+  --color-text-subtle: #a8a29e;
+  --color-text-inverse: var(--white);
+
+  /* Borders & Dividers */
+  --color-border: #e7e2d7;
+  --color-border-subtle: #efebe2;
+  --color-border-strong: #d7d1c5;
+  --color-border-focus: #b45309;
+
+  /* Primary Brand (Warm Brick/Amber) */
+  --color-primary: #854d0e;
+  --color-primary-hover: #713f12;
+  --color-primary-subtle: #fef9c3;
+  --color-primary-fg: var(--white);
+
+  /* Secondary */
+  --color-secondary: #ca8a04;
+  --color-secondary-hover: #a16207;
+  --color-secondary-subtle: #fef08a;
+  --color-secondary-fg: var(--white);
+
+  /* Success */
+  --color-success: #059669;
+  --color-success-hover: #047857;
+  --color-success-subtle: #d1fae5;
+  --color-success-fg: var(--white);
+
+  /* Warning */
+  --color-warning: #d97706;
+  --color-warning-subtle: #fef3c7;
+  --color-warning-fg: var(--white);
+
+  /* Destructive */
+  --color-destructive: #dc2626;
+  --color-destructive-hover: #b91c1c;
+  --color-destructive-subtle: #fee2e2;
+  --color-destructive-fg: var(--white);
+
+  /* Header & Navigation */
+  --color-header-bg: var(--white);
+  --color-nav-bg: var(--white);
+  --color-nav-active-bg: #fef08a;
+  --color-nav-active-text: #854d0e;
+  --color-nav-active-border: #facc15;
+
+  /* Focus Ring */
+  --color-ring: rgba(133, 77, 14, 0.2);
+}
+
+/* ==========================================================================
+   4. TEMA SLATE: ABU-ABU MINIMALIS & NETRAL
+   ========================================================================== */
+[data-theme="slate"],
+body[data-theme="slate"] {
+  /* Backgrounds */
+  --color-bg-page: #edf2f7;
+  --color-bg-card: var(--white);
+  --color-bg-subtle: #e2e8f0;
+  --color-bg-input: var(--white);
+  --color-bg-hover: #f1f5f9;
+  --color-bg-modal: var(--white);
+  --color-bg-table-header: #f1f5f9;
+  --color-bg-table-stripe: #f8fafc;
+
+  /* Text & Content */
+  --color-text-main: #1e293b;
+  --color-text-muted: #64748b;
+  --color-text-subtle: #94a3b8;
+  --color-text-inverse: var(--white);
+
+  /* Borders & Dividers */
+  --color-border: #cbd5e1;
+  --color-border-subtle: #e2e8f0;
+  --color-border-strong: #94a3b8;
+  --color-border-focus: var(--slate-700);
+
+  /* Primary Brand (Deep Slate) */
+  --color-primary: #334155;
+  --color-primary-hover: #1e293b;
+  --color-primary-subtle: #f1f5f9;
+  --color-primary-fg: var(--white);
+
+  /* Secondary */
+  --color-secondary: #475569;
+  --color-secondary-hover: #334155;
+  --color-secondary-subtle: #f1f5f9;
+  --color-secondary-fg: var(--white);
+
+  /* Success */
+  --color-success: #059669;
+  --color-success-hover: #047857;
+  --color-success-subtle: #ecfdf5;
+  --color-success-fg: var(--white);
+
+  /* Warning */
+  --color-warning: #d97706;
+  --color-warning-subtle: #fffbeb;
+  --color-warning-fg: var(--white);
+
+  /* Destructive */
+  --color-destructive: #dc2626;
+  --color-destructive-hover: #b91c1c;
+  --color-destructive-subtle: #fef2f2;
+  --color-destructive-fg: var(--white);
+
+  /* Header & Navigation */
+  --color-header-bg: var(--white);
+  --color-nav-bg: var(--white);
+  --color-nav-active-bg: #e2e8f0;
+  --color-nav-active-text: #1e293b;
+  --color-nav-active-border: #94a3b8;
+
+  /* Focus Ring */
+  --color-ring: rgba(51, 65, 85, 0.25);
+}
