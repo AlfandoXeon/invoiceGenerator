@@ -73,6 +73,7 @@ class Database {
               taxPercent REAL DEFAULT 0,
               taxAmount REAL DEFAULT 0,
               grandTotal REAL DEFAULT 0,
+              totalCost REAL DEFAULT 0,
               paymentMethod TEXT DEFAULT 'TUNAI',
               cashReceived REAL DEFAULT 0,
               change REAL DEFAULT 0,
@@ -80,9 +81,54 @@ class Database {
             );
           `);
 
+          // Migrasi kolom totalCost jika tabel transactions sudah ada sebelumnya
+          try {
+            await this.run(`ALTER TABLE transactions ADD COLUMN totalCost REAL DEFAULT 0;`);
+          } catch (_) {
+            // Kolom sudah tersedia
+          }
+
           await this.run(`CREATE INDEX IF NOT EXISTS idx_trx_invoiceNumber ON transactions(invoiceNumber);`);
           await this.run(`CREATE INDEX IF NOT EXISTS idx_trx_timestamp ON transactions(timestamp);`);
           await this.run(`CREATE INDEX IF NOT EXISTS idx_trx_formattedDate ON transactions(formattedDate);`);
+
+          // Backfill totalCost untuk transaksi lama jika ada yang masih 0 / null
+          try {
+            const zeroCostTrx = await this.all('SELECT id, items FROM transactions WHERE totalCost IS NULL OR totalCost = 0;');
+            if (zeroCostTrx && zeroCostTrx.length > 0) {
+              const allProducts = await this.all('SELECT id, name, costPrice FROM products;');
+              const prodMap = new Map();
+              allProducts.forEach(p => {
+                prodMap.set(String(p.id), p.costPrice || 0);
+                if (p.name) prodMap.set(p.name.trim().toLowerCase(), p.costPrice || 0);
+              });
+
+              for (const trx of zeroCostTrx) {
+                if (trx.items) {
+                  const parsed = JSON.parse(trx.items || '[]');
+                  let sumCost = 0;
+                  let hasCost = false;
+                  for (const it of parsed) {
+                    let cp = parseFloat(it.costPrice) || 0;
+                    if (!cp) {
+                      if (it.id && prodMap.has(String(it.id))) {
+                        cp = prodMap.get(String(it.id));
+                      } else if (it.name && prodMap.has(it.name.trim().toLowerCase())) {
+                        cp = prodMap.get(it.name.trim().toLowerCase());
+                      }
+                    }
+                    if (cp > 0) hasCost = true;
+                    sumCost += (cp * (parseInt(it.qty, 10) || 1));
+                  }
+                  if (hasCost && sumCost > 0) {
+                    await this.run('UPDATE transactions SET totalCost = ? WHERE id = ?;', [sumCost, trx.id]);
+                  }
+                }
+              }
+            }
+          } catch (_) {
+            // Abaikan jika tabel atau data kosong
+          }
 
           resolve(this.db);
         } catch (tableErr) {

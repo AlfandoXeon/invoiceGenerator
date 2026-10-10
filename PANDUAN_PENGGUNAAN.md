@@ -97,6 +97,19 @@ Agar kasir tidak perlu mengetik nama dan harga barang berulang-ulang, daftarkan 
 - Untuk mengubah harga atau stok: Klik ikon pensil (Ubah Data) pada baris barang tersebut, sesuaikan angkanya, lalu klik simpan.
 - Untuk menghapus barang: Klik ikon tempat sampah pada baris barang terkait.
 
+### 4.3 Restock / Barang Masuk Cepat (Kulakan Distributor)
+Saat Anda menerima kiriman stok baru dari suplier atau distributor:
+1. Klik tombol **Barang Masuk / Restock** di bagian atas atau klik ikon kotak masuk (`move_to_inbox`) pada baris produk yang ingin ditambah.
+2. Masukkan **Jumlah Barang Masuk** (contoh: kulakan 24 pcs).
+3. Jika harga beli modal dari suplier mengalami perubahan naik/turun, isi kolom **Harga Modal Baru (Opsional)**.
+4. Periksa ringkasan *Estimasi Stok Baru* dan *Estimasi Biaya Masuk*.
+5. Klik **Konfirmasi Barang Masuk**. Stok akan langsung terakumulasi tanpa mengedit data barang secara manual.
+
+### 4.4 Ekspor Katalog Barang ke Excel / CSV
+Untuk keperluan stok opname atau pembukuan fisik:
+1. Klik tombol **Ekspor CSV** di bagian atas tabel barang.
+2. Berkas CSV berstandar UTF-8 akan otomatis terunduh dan dapat langsung dibuka di Microsoft Excel dengan kolom lengkap (modal, jual, margin laba, stok, dan total nilai aset modal).
+
 ---
 
 ## Bab 5: Alur Transaksi Penjualan di Menu Kasir
@@ -171,14 +184,25 @@ Jika pembeli tidak ingin struk fisik atau berbelanja secara daring (online):
 
 ### 8.1 Melihat Riwayat dan Mencetak Ulang Nota Lama
 1. Buka tab **Riwayat Penjualan**.
-2. Anda akan melihat seluruh daftar transaksi yang pernah dilakukan lengkap dengan tanggal, jam, nama kasir, dan total uang.
+2. Anda akan melihat seluruh daftar transaksi yang pernah dilakukan lengkap dengan tanggal, jam, nama kasir, total belanja, dan estimasi laba.
 3. Anda dapat mencari nomor nota tertentu melalui kolom pencarian di bagian atas.
 4. Pada kolom pilihan di ujung kanan:
    - Ikon printer: Untuk mencetak ulang struk nota tersebut.
-   - Ikon mata: Untuk melihat rincian isi belanjaan nota yang bersangkutan.
-   - Ikon tempat sampah: Untuk menghapus catatan transaksi jika diperlukan.
+   - Ikon mata: Untuk melihat rincian isi belanjaan nota yang bersangkutan beserta rincian modal (HPP) dan estimasi laba.
+   - Ikon tempat sampah: Untuk menghapus catatan transaksi jika diperlukan (stok barang akan otomatis dikembalikan ke katalog).
 
-### 8.2 Mencadangkan Data Toko (Backup Data)
+### 8.2 Memantau Laporan Laba Bersih dan Filter Tanggal
+Pada bagian atas halaman riwayat:
+1. Periksa kartu indikator: **Total Omset**, **Total Modal (HPP)**, dan **Estimasi Laba Bersih** (keuntungan murni setelah dikurangi harga modal kulakan).
+2. Gunakan kolom tanggal **Dari** dan **Sampai**, lalu klik **Filter** untuk melihat ringkasan omset dan laba pada rentang tanggal tertentu (misalnya rekap mingguan atau bulanan).
+3. Klik tombol **Reset** untuk kembali menampilkan seluruh data.
+
+### 8.3 Ekspor Rekap Penjualan ke Excel / CSV
+1. Klik tombol **Ekspor CSV** di samping kolom pencarian riwayat.
+2. Jika Anda sedang memfilter rentang tanggal tertentu, berkas CSV yang diunduh akan otomatis memuat transaksi pada periode tersebut saja.
+3. Berkas memuat rincian lengkap: nomor nota, tanggal, kasir, metode pembayaran, subtotal, diskon, PPN, omset, HPP, estimasi laba, dan detail rincian produk yang terjual.
+
+### 8.4 Mencadangkan Data Toko (Backup Data)
 Seluruh data toko (profil, daftar barang, dan transaksi) disimpan di komputer Anda dalam basis data SQLite 3 dan berkas konfigurasi lokal. Agar data tetap aman:
 1. Buka tab **Pengaturan**.
 2. Gulir ke bagian paling bawah pada kartu **Cadangan Data Toko (Backup ZIP)**.

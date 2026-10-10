@@ -25,13 +25,20 @@ Aplikasi ini dirancang khusus untuk toko kelontong, warung, minimarket mandiri, 
    - Daftar petugas kasir dapat dikelola dan dipilih langsung saat transaksi.
    - Pilihan 4 tema tampilan visual yang nyaman di mata (Terang Bersih, Krem Lembut, Abu Minimalis, Gelap Halus).
 
-6. Katalog Barang dan Pilihan Cepat:
-   Manajemen data produk dengan pencarian cepat nama atau kode barcode, serta tombol pintas barang favorit di meja kasir.
+6. Katalog Barang, Pilihan Cepat & Restock Masuk:
+   - Manajemen data produk dengan pencarian cepat nama atau kode barcode, serta tombol pintas barang favorit di meja kasir.
+   - Fitur **Restock / Barang Masuk Cepat** dari distributor dengan akumulasi stok otomatis dan opsi pembaruan harga modal beli.
 
-7. Riwayat Penjualan Lengkap dan Cetak Ulang:
-   Setiap transaksi tersimpan rapi dan dapat ditinjau ulang maupun dicetak ulang kapan saja.
+7. Riwayat Penjualan, Laporan Laba Rugi & Cetak Ulang:
+   - Pencatatan snapshot harga modal (HPP) pada setiap nota secara atomik.
+   - Panel ringkasan: Total Omset, Total Modal (HPP), dan **Estimasi Laba Bersih (Profit)**.
+   - Filter rentang tanggal transaksi untuk rekapitulasi harian, mingguan, atau bulanan.
 
-8. Pencadangan Data (Backup ZIP):
+8. Ekspor Data ke Excel / CSV:
+   - Ekspor data katalog produk dan nilai aset modal ke berkas `.csv`.
+   - Ekspor rekapitulasi nota penjualan lengkap dengan rincian barang ke format `.csv` berstandar UTF-8.
+
+9. Pencadangan Data Mandiri (Backup ZIP):
    Fitur ekspor cadangan data lengkap dalam satu berkas arsip ZIP (berisi database.sqlite dan config.json) untuk memudahkan pemindahan data ke flashdisk atau komputer lain.
 
 ---

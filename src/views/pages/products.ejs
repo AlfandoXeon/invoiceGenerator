@@ -26,10 +26,22 @@
         </p>
       </div>
 
-      <button type="button" onclick="ProductManager.openAddModal()" class="pos-btn pos-btn-primary text-xs sm:text-sm">
-        <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
-        <span>Tambah Barang Baru</span>
-      </button>
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="/products/export/csv" class="pos-btn pos-btn-secondary text-xs sm:text-sm" title="Unduh katalog produk dalam format CSV / Excel">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">file_download</span>
+          <span>Ekspor CSV</span>
+        </a>
+
+        <button type="button" onclick="ProductManager.openRestockModal()" class="pos-btn pos-btn-secondary text-xs sm:text-sm font-semibold border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100" title="Tambah stok barang masuk dari distributor">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">move_to_inbox</span>
+          <span>Barang Masuk / Restock</span>
+        </button>
+
+        <button type="button" onclick="ProductManager.openAddModal()" class="pos-btn pos-btn-primary text-xs sm:text-sm">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">add</span>
+          <span>Tambah Barang Baru</span>
+        </button>
+      </div>
     </div>
 
     <!-- Kolom Pencarian & Filter Kategori -->
@@ -111,6 +123,9 @@
                 </td>
                 <td class="py-3 px-4 text-center">
                   <div class="inline-flex items-center gap-1">
+                    <button type="button" onclick="ProductManager.openRestockModal('<%= item.id %>', '<%= item.name %>', <%= item.stock %>, <%= item.costPrice %>, '<%= item.unit || 'Pcs' %>')" class="p-1 rounded text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition" title="Restock / Barang Masuk">
+                      <span class="material-symbols-outlined text-base" aria-hidden="true">move_to_inbox</span>
+                    </button>
                     <button type="button" onclick="ProductManager.openEditModal('<%= item.id %>', '<%= item.barcode %>', '<%= item.name %>', '<%= item.category %>', <%= item.costPrice %>, <%= item.sellingPrice %>, '<%= item.unit %>', <%= item.stock %>)" class="p-1 rounded text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-subtle)] transition" title="Ubah Data">
                       <span class="material-symbols-outlined text-base" aria-hidden="true">edit</span>
                     </button>
@@ -198,11 +213,89 @@
     </div>
   </div>
 
+  <!-- MODAL RESTOCK / BARANG MASUK -->
+  <div id="restock-modal" class="pos-modal-backdrop hidden items-center justify-center p-4">
+    <div class="pos-modal-card p-5 sm:p-6 relative max-w-md w-full">
+      <div class="flex justify-between items-center mb-4 pb-2.5 border-b border-[var(--color-border-subtle)]">
+        <h3 class="font-bold text-sm sm:text-base flex items-center gap-2 text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined text-lg text-emerald-600" aria-hidden="true">move_to_inbox</span>
+          <span>Restock / Barang Masuk</span>
+        </h3>
+        <button type="button" onclick="ProductManager.closeRestockModal()" class="p-1 rounded text-[var(--color-text-subtle)] hover:text-[var(--color-text-main)]">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <form id="restock-form" onsubmit="ProductManager.handleRestockSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="pos-label">Pilih Produk *</label>
+          <select id="restock-product-select" onchange="ProductManager.onRestockProductChange(this.value)" required class="pos-select font-medium text-xs">
+            <option value="">-- Pilih Barang --</option>
+            <% products.forEach(function(p) { %>
+              <option value="<%= p.id %>" data-stock="<%= p.stock %>" data-cost="<%= p.costPrice %>" data-unit="<%= p.unit || 'Pcs' %>">
+                <%= p.name %> (Stok: <%= p.stock %> <%= p.unit || 'Pcs' %>)
+              </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="p-3 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-[var(--color-text-muted)]">Stok Saat Ini:</span>
+            <span id="restock-current-stock" class="font-bold font-mono text-[var(--color-text-main)]">0 Pcs</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--color-text-muted)]">Harga Modal Saat Ini:</span>
+            <span id="restock-current-cost" class="font-mono text-[var(--color-text-main)]">Rp0</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="pos-label">Jumlah Barang Masuk *</label>
+            <input type="number" id="restock-qty" min="1" required placeholder="Contoh: 10" oninput="ProductManager.updateRestockPreview()" class="pos-input font-bold font-mono text-center">
+          </div>
+          <div>
+            <label class="pos-label">Harga Modal Baru (Opsional)</label>
+            <input type="number" id="restock-cost-price" min="0" placeholder="Biarkan jika sama" oninput="ProductManager.updateRestockPreview()" class="pos-input font-mono">
+          </div>
+        </div>
+
+        <!-- Preview Hasil Restock -->
+        <div id="restock-preview-box" class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1 text-emerald-900 dark:text-emerald-200">
+          <div class="flex justify-between font-bold">
+            <span>Estimasi Stok Baru:</span>
+            <span id="restock-new-stock-preview" class="font-mono text-sm">0 Pcs</span>
+          </div>
+          <div class="flex justify-between text-[11px] opacity-80">
+            <span>Estimasi Biaya Masuk:</span>
+            <span id="restock-cost-subtotal" class="font-mono">Rp0</span>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-[var(--color-border-subtle)] flex justify-end gap-2">
+          <button type="button" onclick="ProductManager.closeRestockModal()" class="pos-btn pos-btn-secondary text-xs">
+            Batal (Esc)
+          </button>
+          <button type="submit" id="btn-submit-restock" class="pos-btn pos-btn-success text-xs">
+            <span class="material-symbols-outlined text-sm" aria-hidden="true">check</span>
+            <span>Konfirmasi Barang Masuk</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Footer -->
   <%- include('../partials/footer') %>
 
   <!-- Toast -->
   <%- include('../partials/toast') %>
+
+  <!-- Data Awal untuk JS -->
+  <script>
+    window.PRODUCTS_DATA = <%- JSON.stringify(products) %>;
+  </script>
 
   <!-- Scripts -->
   <script src="/js/product-manager.js"></script>

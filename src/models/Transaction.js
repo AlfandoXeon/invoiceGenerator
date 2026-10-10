@@ -90,6 +90,7 @@ class Transaction {
       taxPercent: parseFloat(data.taxPercent) || 0,
       taxAmount: parseFloat(data.taxAmount) || 0,
       grandTotal: parseFloat(data.grandTotal) || 0,
+      totalCost: parseFloat(data.totalCost) || 0,
       paymentMethod: (data.paymentMethod || config.pos.defaultPaymentMethod || 'TUNAI').toUpperCase(),
       cashReceived: parseFloat(data.cashReceived) || 0,
       change: parseFloat(data.change) || 0,
@@ -99,9 +100,9 @@ class Transaction {
     await Database.run(`
       INSERT INTO transactions (
         id, invoiceNumber, timestamp, formattedDate, cashier, items,
-        subtotal, discount, taxPercent, taxAmount, grandTotal,
+        subtotal, discount, taxPercent, taxAmount, grandTotal, totalCost,
         paymentMethod, cashReceived, change, note
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `, [
       newTransaction.id,
       newTransaction.invoiceNumber,
@@ -114,6 +115,7 @@ class Transaction {
       newTransaction.taxPercent,
       newTransaction.taxAmount,
       newTransaction.grandTotal,
+      newTransaction.totalCost,
       newTransaction.paymentMethod,
       newTransaction.cashReceived,
       newTransaction.change,
@@ -134,7 +136,37 @@ class Transaction {
   }
 
   /**
-   * Menghitung statistik penjualan secara instan dengan agregasi SQL
+   * Mengambil riwayat transaksi berdasarkan rentang tanggal
+   * @param {string|null} startDate - Format YYYY-MM-DD
+   * @param {string|null} endDate - Format YYYY-MM-DD
+   * @returns {Promise<Array>}
+   */
+  static async getByDateRange(startDate = null, endDate = null) {
+    let sql = 'SELECT * FROM transactions';
+    const params = [];
+
+    if (startDate && endDate) {
+      sql += ' WHERE date(timestamp) >= date(?) AND date(timestamp) <= date(?)';
+      params.push(startDate, endDate);
+    } else if (startDate) {
+      sql += ' WHERE date(timestamp) >= date(?)';
+      params.push(startDate);
+    } else if (endDate) {
+      sql += ' WHERE date(timestamp) <= date(?)';
+      params.push(endDate);
+    }
+
+    sql += ' ORDER BY timestamp DESC;';
+
+    const rows = await Database.all(sql, params);
+    return rows.map(r => ({
+      ...r,
+      items: typeof r.items === 'string' ? JSON.parse(r.items || '[]') : (r.items || [])
+    }));
+  }
+
+  /**
+   * Menghitung statistik penjualan dan laba rugi secara instan dengan agregasi SQL
    * @returns {Promise<Object>}
    */
   static async getStats() {
@@ -146,18 +178,27 @@ class Transaction {
     });
 
     const todayStats = await Database.get(
-      'SELECT COALESCE(SUM(grandTotal), 0) as todaySales, COUNT(*) as todayCount FROM transactions WHERE formattedDate LIKE ?;',
+      'SELECT COALESCE(SUM(grandTotal), 0) as todaySales, COALESCE(SUM(totalCost), 0) as todayCost, COUNT(*) as todayCount FROM transactions WHERE formattedDate LIKE ?;',
       [`${todayDate}%`]
     );
 
     const totalStats = await Database.get(
-      'SELECT COALESCE(SUM(grandTotal), 0) as totalSales, COUNT(*) as totalCount FROM transactions;'
+      'SELECT COALESCE(SUM(grandTotal), 0) as totalSales, COALESCE(SUM(totalCost), 0) as totalCost, COUNT(*) as totalCount FROM transactions;'
     );
 
+    const todaySales = todayStats ? Number(todayStats.todaySales) : 0;
+    const todayCost = todayStats ? Number(todayStats.todayCost) : 0;
+    const totalSales = totalStats ? Number(totalStats.totalSales) : 0;
+    const totalCost = totalStats ? Number(totalStats.totalCost) : 0;
+
     return {
-      todaySales: todayStats ? todayStats.todaySales : 0,
+      todaySales,
+      todayCost,
+      todayProfit: todaySales - todayCost,
       todayCount: todayStats ? todayStats.todayCount : 0,
-      totalSales: totalStats ? totalStats.totalSales : 0,
+      totalSales,
+      totalCost,
+      totalProfit: totalSales - totalCost,
       totalCount: totalStats ? totalStats.totalCount : 0
     };
   }

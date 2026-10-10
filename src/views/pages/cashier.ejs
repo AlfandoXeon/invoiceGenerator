@@ -18,10 +18,15 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 no-print" data-aos="fade-down">
       
       <!-- Metrik Hari Ini -->
-      <div class="grid grid-cols-3 gap-3 w-full md:w-auto flex-grow max-w-xl">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto flex-grow max-w-2xl">
         <div class="pos-card p-3">
           <span class="text-[11px] font-semibold text-[var(--color-text-muted)] block">Penjualan Hari Ini</span>
           <p class="text-base sm:text-lg font-bold text-[var(--color-text-main)] mt-0.5"><%= formatRupiah(stats.todaySales) %></p>
+        </div>
+
+        <div class="pos-card p-3 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800">
+          <span class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 block">Laba Hari Ini</span>
+          <p class="text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">+<%= formatRupiah(stats.todayProfit) %></p>
         </div>
 
         <div class="pos-card p-3">

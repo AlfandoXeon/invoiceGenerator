@@ -81,18 +81,44 @@ class CashierController extends BaseController {
         return this.sendError(res, stockValidation.errors.join('; '), 400);
       }
 
+      // Ambil seluruh data produk untuk snapshot costPrice (HPP) yang akurat
+      const allProducts = await Product.getAll();
+      let calculatedTotalCost = 0;
+
+      const enrichedItems = items.map(item => {
+        let costPrice = parseFloat(item.costPrice) || 0;
+        if (!costPrice) {
+          const prod = allProducts.find(p => 
+            (item.id && String(p.id) === String(item.id)) ||
+            (item.productId && String(p.id) === String(item.productId)) ||
+            (item.barcode && p.barcode && p.barcode.trim() === String(item.barcode).trim()) ||
+            (item.name && p.name && p.name.trim().toLowerCase() === String(item.name).trim().toLowerCase())
+          );
+          if (prod) {
+            costPrice = parseFloat(prod.costPrice) || 0;
+          }
+        }
+        const qty = parseInt(item.qty, 10) || 1;
+        calculatedTotalCost += (costPrice * qty);
+        return {
+          ...item,
+          costPrice
+        };
+      });
+
       // 2 & 3. Eksekusi atomik: kurangi stok dan catat transaksi
       const { transaction, updatedProducts } = await Database.withTransaction(async () => {
-        const reduced = await Product.deductStock(items);
+        const reduced = await Product.deductStock(enrichedItems);
         const trx = await Transaction.create({
           invoiceNumber,
           cashier,
-          items,
+          items: enrichedItems,
           subtotal,
           discount,
           taxPercent,
           taxAmount,
           grandTotal,
+          totalCost: calculatedTotalCost,
           paymentMethod,
           cashReceived,
           change,

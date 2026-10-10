@@ -145,6 +145,44 @@ class Product {
   }
 
   /**
+   * Menambah stok barang masuk (Restock) dan opsi perbarui harga modal
+   * @param {string} id - ID produk
+   * @param {number} additionalQty - Jumlah stok yang masuk
+   * @param {number|null} newCostPrice - Harga modal baru (opsional)
+   * @returns {Promise<Object|null>}
+   */
+  static async restock(id, additionalQty, newCostPrice = null) {
+    const current = await this.getById(id);
+    if (!current) return null;
+
+    const addQty = parseInt(additionalQty, 10) || 0;
+    if (addQty <= 0) {
+      throw new Error('Jumlah barang masuk harus lebih dari 0');
+    }
+
+    const updatedStock = (parseInt(current.stock, 10) || 0) + addQty;
+    const cost = (newCostPrice !== null && newCostPrice !== undefined && newCostPrice !== '' && !isNaN(newCostPrice) && parseFloat(newCostPrice) >= 0)
+      ? parseFloat(newCostPrice)
+      : current.costPrice;
+    const now = new Date().toISOString();
+
+    await Database.run(`
+      UPDATE products SET
+        stock = ?,
+        costPrice = ?,
+        updatedAt = ?
+      WHERE id = ?;
+    `, [updatedStock, cost, now, String(id)]);
+
+    return {
+      ...current,
+      stock: updatedStock,
+      costPrice: cost,
+      updatedAt: now
+    };
+  }
+
+  /**
    * Memvalidasi ketersediaan stok produk untuk daftar item transaksi
    * @param {Array} items - Daftar item transaksi [{ id, name, qty }]
    * @returns {Promise<{ valid: boolean, errors: Array<string> }>}

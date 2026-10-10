@@ -5,6 +5,9 @@ const HistoryController = require('../controllers/HistoryController');
 // Halaman riwayat transaksi
 router.get('/history', HistoryController.renderHistoryPage);
 
+// Ekspor riwayat transaksi ke CSV
+router.get('/history/export/csv', HistoryController.exportTransactionsCsv);
+
 // API Rincian transaksi
 router.get('/api/transactions/:id', HistoryController.getTransactionDetail);
 

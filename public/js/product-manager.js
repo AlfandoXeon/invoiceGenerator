@@ -217,6 +217,182 @@ const ProductManager = {
 
     const countEl = document.getElementById('visible-product-count');
     if (countEl) countEl.innerText = visibleCount;
+  },
+
+  openRestockModal(id = null, name = '', currentStock = 0, currentCost = 0, unit = 'Pcs') {
+    const modal = document.getElementById('restock-modal');
+    if (!modal) return;
+
+    const select = document.getElementById('restock-product-select');
+    const form = document.getElementById('restock-form');
+    if (form) form.reset();
+
+    if (id && select) {
+      select.value = id;
+      this.onRestockProductChange(id);
+    } else if (select && select.options.length > 1) {
+      // Pilih opsi pertama secara default
+      select.selectedIndex = 1;
+      this.onRestockProductChange(select.value);
+    } else {
+      this.onRestockProductChange('');
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex', 'active');
+
+    const qtyInput = document.getElementById('restock-qty');
+    if (qtyInput) {
+      qtyInput.value = '';
+      qtyInput.focus();
+    }
+    this.updateRestockPreview();
+  },
+
+  closeRestockModal() {
+    const modal = document.getElementById('restock-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex', 'active');
+    }
+  },
+
+  onRestockProductChange(productId) {
+    const stockEl = document.getElementById('restock-current-stock');
+    const costEl = document.getElementById('restock-current-cost');
+    const costInput = document.getElementById('restock-cost-price');
+
+    if (!productId) {
+      if (stockEl) stockEl.innerText = '0 Pcs';
+      if (costEl) costEl.innerText = 'Rp0';
+      if (costInput) costInput.placeholder = '0';
+      this.updateRestockPreview();
+      return;
+    }
+
+    const select = document.getElementById('restock-product-select');
+    const opt = select ? select.selectedOptions[0] : null;
+
+    let stock = 0;
+    let cost = 0;
+    let unit = 'Pcs';
+
+    if (window.PRODUCTS_DATA && Array.isArray(window.PRODUCTS_DATA)) {
+      const found = window.PRODUCTS_DATA.find(p => String(p.id) === String(productId));
+      if (found) {
+        stock = found.stock || 0;
+        cost = found.costPrice || 0;
+        unit = found.unit || 'Pcs';
+      }
+    } else if (opt) {
+      stock = opt.getAttribute('data-stock') || 0;
+      cost = opt.getAttribute('data-cost') || 0;
+      unit = opt.getAttribute('data-unit') || 'Pcs';
+    }
+
+    const formatRp = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+
+    if (stockEl) stockEl.innerText = `${stock} ${unit}`;
+    if (costEl) costEl.innerText = formatRp(cost);
+    if (costInput) costInput.placeholder = `Saat ini: ${formatRp(cost)}`;
+
+    this.updateRestockPreview();
+  },
+
+  updateRestockPreview() {
+    const select = document.getElementById('restock-product-select');
+    const productId = select ? select.value : '';
+    const qtyInput = document.getElementById('restock-qty');
+    const costInput = document.getElementById('restock-cost-price');
+    const previewStock = document.getElementById('restock-new-stock-preview');
+    const previewCost = document.getElementById('restock-cost-subtotal');
+
+    let currentStock = 0;
+    let currentCost = 0;
+    let unit = 'Pcs';
+
+    if (window.PRODUCTS_DATA && Array.isArray(window.PRODUCTS_DATA)) {
+      const found = window.PRODUCTS_DATA.find(p => String(p.id) === String(productId));
+      if (found) {
+        currentStock = parseInt(found.stock, 10) || 0;
+        currentCost = parseFloat(found.costPrice) || 0;
+        unit = found.unit || 'Pcs';
+      }
+    }
+
+    const addQty = parseInt(qtyInput ? qtyInput.value : 0, 10) || 0;
+    const customCost = parseFloat(costInput ? costInput.value : 0);
+    const effectiveCost = (!isNaN(customCost) && customCost >= 0 && costInput && costInput.value !== '') ? customCost : currentCost;
+
+    const newStock = currentStock + addQty;
+    const totalCost = addQty * effectiveCost;
+
+    const formatRp = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+
+    if (previewStock) {
+      previewStock.innerText = `${newStock} ${unit} (+${addQty} ${unit})`;
+    }
+    if (previewCost) {
+      previewCost.innerText = formatRp(totalCost);
+    }
+  },
+
+  async handleRestockSubmit(event) {
+    event.preventDefault();
+    const select = document.getElementById('restock-product-select');
+    const id = select ? select.value : '';
+    const qtyInput = document.getElementById('restock-qty');
+    const costInput = document.getElementById('restock-cost-price');
+
+    if (!id) {
+      if (typeof showToast === 'function') showToast('Pilih barang yang ingin di-restock!', 'warning');
+      return;
+    }
+
+    const qty = parseInt(qtyInput ? qtyInput.value : 0, 10);
+    if (isNaN(qty) || qty <= 0) {
+      if (typeof showToast === 'function') showToast('Jumlah barang masuk minimal 1!', 'warning');
+      return;
+    }
+
+    const costPrice = costInput && costInput.value !== '' ? parseFloat(costInput.value) : null;
+    const btn = document.getElementById('btn-submit-restock');
+    if (btn) btn.disabled = true;
+
+    try {
+      const response = await fetch(`/api/products/${encodeURIComponent(id)}/restock`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ qty, costPrice })
+      });
+
+      const resJson = await response.json();
+      if (!resJson.success) {
+        throw new Error(resJson.message || 'Gagal melakukan restock barang');
+      }
+
+      this.closeRestockModal();
+      if (typeof showToast === 'function') {
+        showToast(resJson.message || 'Stok berhasil ditambahkan!', 'success');
+      }
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 350);
+
+    } catch (error) {
+      console.error('[ProductManager] Error restock:', error);
+      if (typeof showToast === 'function') {
+        showToast('Gagal restock: ' + error.message, 'error');
+      } else {
+        alert('Gagal restock: ' + error.message);
+      }
+      if (btn) btn.disabled = false;
+    }
   }
 };
 
@@ -229,6 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sellEl) sellEl.addEventListener('input', () => ProductManager.updateMarginPreview());
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') ProductManager.closeModal();
+    if (e.key === 'Escape') {
+      ProductManager.closeModal();
+      ProductManager.closeRestockModal();
+    }
   });
 });
